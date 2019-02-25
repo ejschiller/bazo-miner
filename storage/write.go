@@ -120,3 +120,7 @@ func WriteClosedTx(transaction protocol.Transaction) (err error) {
 	averageTxSize = totalTransactionSize/nrClosedTransactions
 	return err
 }
+
+func WriteAccount(account *protocol.Account) {
+	State[account.Address] = account
+}

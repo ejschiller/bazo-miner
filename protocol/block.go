@@ -13,7 +13,7 @@ const (
 	HASH_LEN                = 32
 	HEIGHT_LEN				= 4
 	//All fixed sizes form the Block struct are 254
-	MIN_BLOCKSIZE           = 254 + crypto.COMM_PROOF_LENGTH + 1
+	MIN_BLOCKSIZE           = 254 + crypto.COMM_PROOF_LENGTH_ED + 1
 	MIN_BLOCKHEADER_SIZE    = 104
 	BLOOM_FILTER_ERROR_RATE = 0.1
 )
@@ -42,7 +42,7 @@ type Block struct {
 	NrStakeTx             uint16
 	NrAggTx         	  uint16
 	SlashedAddress        [32]byte
-	CommitmentProof       [crypto.COMM_PROOF_LENGTH]byte
+	CommitmentProof       [crypto.COMM_PROOF_LENGTH_ED]byte
 	ConflictingBlockHash1 [32]byte
 	ConflictingBlockHash2 [32]byte
 	ConflictingBlockHashWithoutTx1 [32]byte
@@ -78,7 +78,7 @@ func (block *Block) HashBlock() [32]byte {
 		timestamp             			int64
 		merkleRoot            			[32]byte
 		beneficiary           			[32]byte
-		commitmentProof       			[crypto.COMM_PROOF_LENGTH]byte
+		commitmentProof       			[crypto.COMM_PROOF_LENGTH_ED]byte
 		slashedAddress        			[32]byte
 		conflictingBlockHash1 			[32]byte
 		conflictingBlockHash2 			[32]byte
@@ -112,7 +112,7 @@ func (block *Block) HashBlockWithoutMerkleRoot() [32]byte {
 		prevHashWithoutTx	  			[32]byte
 		timestamp             			int64
 		beneficiary           			[32]byte
-		commitmentProof       			[crypto.COMM_PROOF_LENGTH]byte
+		commitmentProof       			[crypto.COMM_PROOF_LENGTH_ED]byte
 		slashedAddress        			[32]byte
 		conflictingBlockHash1 			[32]byte
 		conflictingBlockHash2 			[32]byte

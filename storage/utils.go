@@ -24,6 +24,23 @@ func InitLogger() *log.Logger {
 
 //Needed by miner and p2p package
 func GetAccount(hash [32]byte) (acc *protocol.Account, err error) {
+	fmt.Println("HASH -> ",hash)
+	fmt.Println("STATE -> ",State)
+	fmt.Println("ACCOUNT ->", State[hash])
+	if acc = State[hash]; acc != nil {
+		return acc, nil
+	} else {
+		return nil, errors.New(fmt.Sprintf("Acc (%x) not in the state.", hash[0:8]))
+	}
+}
+
+func GetAccount2(hash [32]byte) (acc *protocol.Account, err error) {
+	fmt.Println("HASH -> ",hash)
+	fmt.Println("STATE -> ",State)
+	fmt.Println("ACCOUNT ->", State[hash])
+	for  _, value := range State {
+		return value, nil
+	}
 	if acc = State[hash]; acc != nil {
 		return acc, nil
 	} else {

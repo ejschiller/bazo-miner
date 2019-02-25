@@ -151,12 +151,9 @@ func initState() (initialBlock *protocol.Block, err error) {
 			}
 		}
 	} else {
-		initialBlock = newBlock([32]byte{},[32]byte{}, [crypto.COMM_PROOF_LENGTH]byte{}, 0)
+		initialBlock = newBlock([32]byte{},[32]byte{}, [crypto.COMM_PROOF_LENGTH_ED]byte{}, 0)
 
-		commitmentProof, err := crypto.SignMessageWithRSAKey(rootCommPrivKey, fmt.Sprint(initialBlock.Height))
-		if err != nil {
-			return nil, err
-		}
+		commitmentProof := crypto.SignMessageWithED(rootCommPrivKey, fmt.Sprint(initialBlock.Height))
 		copy(initialBlock.CommitmentProof[:], commitmentProof[:])
 
 		//Append genesis block to the map and save in storage
@@ -221,7 +218,7 @@ func initState() (initialBlock *protocol.Block, err error) {
 func accStateChange(txSlice []*protocol.AccTx) error {
 	for _, tx := range txSlice {
 		if tx.Header != 2 {
-			newAcc := protocol.NewAccount(tx.PubKey, tx.Issuer, 0, false, [crypto.COMM_KEY_LENGTH]byte{}, tx.Contract, tx.ContractVariables)
+			newAcc := protocol.NewAccount(tx.PubKey, tx.Issuer, 0, false, [crypto.COMM_KEY_LENGTH_ED]byte{}, tx.Contract, tx.ContractVariables)
 			newAccHash := newAcc.Hash()
 
 			acc, _ := storage.GetAccount(newAccHash)

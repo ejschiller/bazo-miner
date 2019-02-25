@@ -67,7 +67,7 @@ func (c *Context) PersistChanges() {
 	}
 }
 
-func (c *Context) GetAddress() [64]byte {
+func (c *Context) GetAddress() [32]byte {
 	return c.Address
 }
 
@@ -95,6 +95,6 @@ func (c *Context) GetFee() uint64 {
 	return c.Fee
 }
 
-func (c *Context) GetSig1() [64]byte {
-	return c.Sig1
+func (c *Context) GetSig() [64]byte {
+	return c.Sig
 }

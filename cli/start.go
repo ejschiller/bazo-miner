@@ -9,6 +9,7 @@ import (
 	"github.com/bazo-blockchain/bazo-miner/storage"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
+	"golang.org/x/crypto/ed25519"
 	"log"
 )
 
@@ -108,42 +109,41 @@ func Start(args *startArgs, logger *log.Logger) error {
 	storage.Init(args.dbname, args.bootstrapNodeAddress)
 	p2p.Init(args.myNodeAddress)
 
-	validatorPubKey, err := crypto.ExtractECDSAPublicKeyFromFile(args.walletFile)
+	validatorPubKey, err := crypto.ExtractEDPublicKeyFromFile(args.walletFile)
 	if err != nil {
 		logger.Printf("%v\n", err)
 		return err
 	}
 
-	rootPrivKey, err := crypto.ExtractECDSAKeyFromFile(args.rootKeyFile)
+	rootPrivKey, err := crypto.ExtractEDPrivKeyFromFile(args.rootKeyFile)
 	if err != nil {
 		logger.Printf("%v\n", err)
 		return err
 	}
 
-	var multisigPubKey *ecdsa.PublicKey
+	var multisigPubKey ed25519.PublicKey
 	if len(args.multisigFile) > 0 {
-		multisigPubKey, err = crypto.ExtractECDSAPublicKeyFromFile(args.multisigFile)
+		multisigPubKey, err = crypto.ExtractEDPublicKeyFromFile(args.multisigFile)
 		if err != nil {
 			logger.Printf("%v\n", err)
 			return err
 		}
 	} else {
-		multisigPubKey = &rootPrivKey.PublicKey
+		multisigPubKey = ed25519.PublicKey{}
 	}
 
-	commPrivKey, err := crypto.ExtractRSAKeyFromFile(args.commitmentFile)
+	commPrivKey, err := crypto.ExtractSeedKeyFromFile(args.commitmentFile)
 	if err != nil {
 		logger.Printf("%v\n", err)
 		return err
 	}
 
-	rootCommPrivKey, err := crypto.ExtractRSAKeyFromFile(args.rootCommitmentFile)
+	rootCommPrivKey, err := crypto.ExtractSeedKeyFromFile(args.rootCommitmentFile)
 	if err != nil {
 		logger.Printf("%v\n", err)
 		return err
 	}
-
-	miner.Init(validatorPubKey, multisigPubKey, &rootPrivKey.PublicKey, commPrivKey, rootCommPrivKey)
+	miner.Init(validatorPubKey, multisigPubKey, rootPrivKey, commPrivKey, rootCommPrivKey)
 	return nil
 }
 

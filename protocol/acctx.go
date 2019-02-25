@@ -17,20 +17,20 @@ type AccTx struct {
 	Header            byte
 	Issuer            [32]byte
 	Fee               uint64
-	PubKey            [64]byte
+	PubKey            [32]byte
 	Sig               [64]byte
 	Contract          []byte
 	ContractVariables []ByteArray
 }
 
-func ConstrAccTx(header byte, fee uint64, address [64]byte, rootPrivKey *ecdsa.PrivateKey, contract []byte, contractVariables []ByteArray) (tx *AccTx, newAccAddress *ecdsa.PrivateKey, err error) {
+func ConstrAccTx(header byte, fee uint64, address [32]byte, rootPrivKey *ecdsa.PrivateKey, contract []byte, contractVariables []ByteArray) (tx *AccTx, newAccAddress *ecdsa.PrivateKey, err error) {
 	tx = new(AccTx)
 	tx.Header = header
 	tx.Fee = fee
 	tx.Contract = contract
 	tx.ContractVariables = contractVariables
 
-	if address != [64]byte{} {
+	if address != [32]byte{} {
 		copy(tx.PubKey[:], address[:])
 	} else {
 		var newAccAddressString string
@@ -75,7 +75,7 @@ func (tx *AccTx) Hash() [32]byte {
 		Header            byte
 		Issuer            [32]byte
 		Fee               uint64
-		PubKey            [64]byte
+		PubKey            [32]byte
 		Contract          []byte
 		ContractVariables []ByteArray
 	}{

@@ -1,12 +1,12 @@
 package miner
 
 import (
-	"crypto/ecdsa"
-	"crypto/rsa"
 	"github.com/bazo-blockchain/bazo-miner/crypto"
 	"github.com/bazo-blockchain/bazo-miner/protocol"
 	"github.com/bazo-blockchain/bazo-miner/storage"
+	"golang.org/x/crypto/ed25519"
 	"log"
+	"os"
 	"sync"
 )
 
@@ -17,18 +17,22 @@ var (
 	activeParameters             *Parameters
 	uptodate                     bool
 	slashingDict                 = make(map[[32]byte]SlashingProof)
-	validatorAccAddress          [64]byte
-	multisigPubKey               *ecdsa.PublicKey
-	commPrivKey, rootCommPrivKey *rsa.PrivateKey
+	validatorAccAddress          [32]byte
+	multisigPubKey               ed25519.PublicKey
+	commPrivKey, rootCommPrivKey ed25519.PrivateKey
 	blockchainSize               = 0
+	FileConnectionsLog         *os.File
+	FileConnections   	       *os.File
+
+
 )
 
 //Miner entry point
-func Init(validatorWallet, multisigWallet, rootWallet *ecdsa.PublicKey, validatorCommitment, rootCommitment *rsa.PrivateKey) {
+func Init(validatorWallet, multisigWallet ed25519.PublicKey , rootWallet, validatorCommitment, rootCommitment ed25519.PrivateKey) {
 	var err error
 
 
-	validatorAccAddress = crypto.GetAddressFromPubKey(validatorWallet)
+	validatorAccAddress = crypto.GetAddressFromPubKeyED(validatorWallet)
 	multisigPubKey = multisigWallet
 	commPrivKey = validatorCommitment
 	rootCommPrivKey = rootCommitment
@@ -41,7 +45,7 @@ func Init(validatorWallet, multisigWallet, rootWallet *ecdsa.PublicKey, validato
 	activeParameters = &parameterSlice[0]
 
 	//Initialize root key.
-	initRootKey(rootWallet)
+	initRootKey(ed25519.PublicKey(rootWallet[32:]))
 	if err != nil {
 		logger.Printf("Could not create a root account.\n")
 	}
@@ -71,7 +75,7 @@ func Init(validatorWallet, multisigWallet, rootWallet *ecdsa.PublicKey, validato
 
 //Mining is a constant process, trying to come up with a successful PoW.
 func mining(initialBlock *protocol.Block) {
-	currentBlock := newBlock(initialBlock.Hash, initialBlock.HashWithoutTx, [crypto.COMM_PROOF_LENGTH]byte{}, initialBlock.Height+1)
+	currentBlock := newBlock(initialBlock.Hash, initialBlock.HashWithoutTx, [crypto.COMM_PROOF_LENGTH_ED]byte{}, initialBlock.Height+1)
 
 	for {
 		err := finalizeBlock(currentBlock)
@@ -100,7 +104,7 @@ func mining(initialBlock *protocol.Block) {
 		//validated with block validation, so we wait in order to not work on tx data that is already validated
 		//when we finish the block.
 		blockValidation.Lock()
-		nextBlock := newBlock(lastBlock.Hash, lastBlock.HashWithoutTx, [crypto.COMM_PROOF_LENGTH]byte{}, lastBlock.Height+1)
+		nextBlock := newBlock(lastBlock.Hash, lastBlock.HashWithoutTx, [crypto.COMM_PROOF_LENGTH_ED]byte{}, lastBlock.Height+1)
 		currentBlock = nextBlock
 		prepareBlock(currentBlock)
 		blockValidation.Unlock()
@@ -108,12 +112,13 @@ func mining(initialBlock *protocol.Block) {
 }
 
 //At least one root key needs to be set which is allowed to create new accounts.
-func initRootKey(rootKey *ecdsa.PublicKey) error {
-	address := crypto.GetAddressFromPubKey(rootKey)
+//At least one root key needs to be set which is allowed to create new accounts.
+func initRootKey(rootKey ed25519.PublicKey) error {
+	address := crypto.GetAddressFromPubKeyED(rootKey)
 	addressHash := protocol.SerializeHashContent(address)
 
-	var commPubKey [crypto.COMM_KEY_LENGTH]byte
-	copy(commPubKey[:], rootCommPrivKey.N.Bytes())
+	var commPubKey [crypto.COMM_KEY_LENGTH_ED]byte
+	copy(commPubKey[:], rootCommPrivKey[32:])
 
 	rootAcc := protocol.NewAccount(address, [32]byte{}, activeParameters.Staking_minimum, true, commPubKey, nil, nil)
 	storage.State[addressHash] = &rootAcc

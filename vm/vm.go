@@ -1,13 +1,10 @@
 package vm
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"math/big"
-
 	"github.com/bazo-blockchain/bazo-miner/protocol"
 
 	"golang.org/x/crypto/sha3"
@@ -17,14 +14,14 @@ type Context interface {
 	GetContract() []byte
 	GetContractVariable(index int) ([]byte, error)
 	SetContractVariable(index int, value []byte) error
-	GetAddress() [64]byte
+	GetAddress() [32]byte
 	GetIssuer() [32]byte
 	GetBalance() uint64
 	GetSender() [32]byte
 	GetAmount() uint64
 	GetTransactionData() []byte
 	GetFee() uint64
-	GetSig1() [64]byte
+	GetSig() [64]byte
 }
 
 type VM struct {
@@ -1048,14 +1045,14 @@ func (vm *VM) Exec(trace bool) bool {
 			}
 
 		case CHECKSIG:
-			publicKeySig, errArg1 := vm.PopBytes(opCode)
+			signature, errArg1 := vm.PopBytes(opCode)
 			hash, errArg2 := vm.PopBytes(opCode)
 
 			if !vm.checkErrors(opCode.Name, errArg1, errArg2) {
 				return false
 			}
 
-			if len(publicKeySig) != 64 {
+			if len(signature) != 64 {
 				vm.evaluationStack.Push([]byte(opCode.Name + ": Not a valid address"))
 				return false
 			}
@@ -1065,20 +1062,9 @@ func (vm *VM) Exec(trace bool) bool {
 				return false
 			}
 
-			pubKey1Sig1, pubKey2Sig1 := new(big.Int), new(big.Int)
-			r, s := new(big.Int), new(big.Int)
+			var pubKeySig [64]byte
+			copy(pubKeySig[:], signature[:])
 
-			pubKey1Sig1.SetBytes(publicKeySig[:32])
-			pubKey2Sig1.SetBytes(publicKeySig[32:])
-
-			sig1 := vm.context.GetSig1()
-			r.SetBytes(sig1[:32])
-			s.SetBytes(sig1[32:])
-
-			pubKey := ecdsa.PublicKey{elliptic.P256(), pubKey1Sig1, pubKey2Sig1}
-
-			result := ecdsa.Verify(&pubKey, hash, r, s)
-			vm.evaluationStack.Push(BoolToByteArray(result))
 
 		case ERRHALT:
 			return false

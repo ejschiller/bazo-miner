@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	STAKETX_SIZE = 106 + crypto.COMM_KEY_LENGTH
+	STAKETX_SIZE = 106 + crypto.COMM_KEY_LENGTH_ED
 )
 
 //when we broadcast transactions we need a way to distinguish with a type
@@ -21,7 +21,7 @@ type StakeTx struct {
 	IsStaking     bool                  // 1 Byte
 	Account       [32]byte              // 32 Byte
 	Sig           [64]byte              // 64 Byte
-	CommitmentKey [crypto.COMM_KEY_LENGTH]byte // the modulus N of the RSA public key
+	CommitmentKey [crypto.COMM_KEY_LENGTH_ED]byte // the modulus N of the RSA public key
 }
 
 func ConstrStakeTx(header byte, fee uint64, isStaking bool, account [32]byte, signKey *ecdsa.PrivateKey, commPubKey *rsa.PublicKey) (tx *StakeTx, err error) {
@@ -59,7 +59,7 @@ func (tx *StakeTx) Hash() (hash [32]byte) {
 		Fee        uint64
 		IsStaking  bool
 		Account    [32]byte
-		CommKey    [crypto.COMM_KEY_LENGTH]byte
+		CommKey    [crypto.COMM_KEY_LENGTH_ED]byte
 	}{
 		tx.Header,
 		tx.Fee,
@@ -96,7 +96,7 @@ func (tx *StakeTx) Encode() (encodedTx []byte) {
 	encodedTx[9] = isStaking
 	copy(encodedTx[10:42], tx.Account[:])
 	copy(encodedTx[42:106], tx.Sig[:])
-	copy(encodedTx[106:106+crypto.COMM_KEY_LENGTH], tx.CommitmentKey[:])
+	copy(encodedTx[106:106+crypto.COMM_KEY_LENGTH_ED], tx.CommitmentKey[:])
 
 	return encodedTx
 }
@@ -115,7 +115,7 @@ func (*StakeTx) Decode(encodedTx []byte) (tx *StakeTx) {
 	isStakingAsByte = encodedTx[9]
 	copy(tx.Account[:], encodedTx[10:42])
 	copy(tx.Sig[:], encodedTx[42:106])
-	copy(tx.CommitmentKey[:], encodedTx[106:106+crypto.COMM_KEY_LENGTH])
+	copy(tx.CommitmentKey[:], encodedTx[106:106+crypto.COMM_KEY_LENGTH_ED])
 
 	if isStakingAsByte == 0 {
 		tx.IsStaking = false

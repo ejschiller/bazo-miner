@@ -2,10 +2,9 @@ package protocol
 
 import (
 	"bytes"
-	"crypto/ecdsa"
-	"crypto/rand"
 	"encoding/gob"
 	"fmt"
+	"golang.org/x/crypto/ed25519"
 )
 
 const (
@@ -21,13 +20,12 @@ type FundsTx struct {
 	TxCnt  		uint32
 	From   		[32]byte
 	To     		[32]byte
-	Sig1   		[64]byte
-	Sig2   		[64]byte
+	Sig  		[64]byte
 	Aggregated 	bool
 	Data   		[]byte
 }
 
-func ConstrFundsTx(header byte, amount uint64, fee uint64, txCnt uint32, from, to [32]byte, sig1Key *ecdsa.PrivateKey, sig2Key *ecdsa.PrivateKey, data []byte) (tx *FundsTx, err error) {
+func ConstrFundsTx(header byte, amount uint64, fee uint64, txCnt uint32, from, to [32]byte, sigKey ed25519.PrivateKey, data []byte) (tx *FundsTx, err error) {
 	tx = new(FundsTx)
 
 	tx.Header = header
@@ -41,23 +39,11 @@ func ConstrFundsTx(header byte, amount uint64, fee uint64, txCnt uint32, from, t
 
 	txHash := tx.Hash()
 
-	r, s, err := ecdsa.Sign(rand.Reader, sig1Key, txHash[:])
-	if err != nil {
-		return nil, err
+	signature := ed25519.Sign(sigKey, txHash[:])
+	if signature == nil {
+		return tx, nil
 	}
-
-	copy(tx.Sig1[32-len(r.Bytes()):32], r.Bytes())
-	copy(tx.Sig1[64-len(s.Bytes()):], s.Bytes())
-
-	if sig2Key != nil {
-		r, s, err := ecdsa.Sign(rand.Reader, sig2Key, txHash[:])
-		if err != nil {
-			return nil, err
-		}
-
-		copy(tx.Sig2[32-len(r.Bytes()):32], r.Bytes())
-		copy(tx.Sig2[64-len(s.Bytes()):], s.Bytes())
-	}
+	copy(tx.Sig[:], signature[:])
 
 	return tx, nil
 }
@@ -100,8 +86,7 @@ func (tx *FundsTx) Encode() (encodedTx []byte) {
 		TxCnt:  tx.TxCnt,
 		From:   tx.From,
 		To:     tx.To,
-		Sig1:   tx.Sig1,
-		Sig2:   tx.Sig2,
+		Sig:   tx.Sig,
 		Data:   tx.Data,
 	}
 	buffer := new(bytes.Buffer)
@@ -140,8 +125,7 @@ func (tx FundsTx) String() string {
 		tx.TxCnt,
 		tx.From[0:8],
 		tx.To[0:8],
-		tx.Sig1[0:8],
-		tx.Sig2[0:8],
+		tx.Sig[0:8],
 		tx.Data,
 	)
 }

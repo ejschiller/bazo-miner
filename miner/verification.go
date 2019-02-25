@@ -1,10 +1,10 @@
 package miner
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
+	"fmt"
+	"github.com/bazo-blockchain/bazo-miner/crypto"
+	"golang.org/x/crypto/ed25519"
 	"math/big"
-	"reflect"
 
 	"github.com/bazo-blockchain/bazo-miner/protocol"
 	"github.com/bazo-blockchain/bazo-miner/storage"
@@ -38,9 +38,6 @@ func verifyFundsTx(tx *protocol.FundsTx) bool {
 		return false
 	}
 
-	pubKey1Sig1, pubKey2Sig1 := new(big.Int), new(big.Int)
-	r, s := new(big.Int), new(big.Int)
-
 	//fundsTx only makes sense if amount > 0
 	if tx.Amount == 0 || tx.Amount > MAX_MONEY {
 		logger.Printf("Invalid transaction amount: %v\n", tx.Amount)
@@ -60,40 +57,20 @@ func verifyFundsTx(tx *protocol.FundsTx) bool {
 	accFromHash := protocol.SerializeHashContent(accFrom.Address)
 	accToHash := protocol.SerializeHashContent(accTo.Address)
 
-	pubKey1Sig1.SetBytes(accFrom.Address[:32])
-	pubKey2Sig1.SetBytes(accFrom.Address[32:])
-
-	r.SetBytes(tx.Sig1[:32])
-	s.SetBytes(tx.Sig1[32:])
 
 	tx.From = accFromHash
 	tx.To = accToHash
 
 	txHash := tx.Hash()
 
-	var validSig1, validSig2 bool
-
-	pubKey := ecdsa.PublicKey{elliptic.P256(), pubKey1Sig1, pubKey2Sig1}
-	if ecdsa.Verify(&pubKey, txHash[:], r, s) && !reflect.DeepEqual(accFrom, accTo) {
-		tx.From = accFromHash
-		tx.To = accToHash
-		validSig1 = true
+	pubKey := crypto.GetPubKeyFromAddressED(tx.From)
+	if ed25519.Verify(pubKey, txHash[:], tx.Sig[:]) && tx.From != tx.To {
+		return true
 	} else {
-		logger.Printf("Sig1 invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8])
+		logger.Printf("Sig invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8])
+		FileConnectionsLog.WriteString(fmt.Sprintf("Sig invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8]))
 		return false
 	}
-
-	r.SetBytes(tx.Sig2[:32])
-	s.SetBytes(tx.Sig2[32:])
-
-	if ecdsa.Verify(multisigPubKey, txHash[:], r, s) {
-		validSig2 = true
-	} else {
-		logger.Printf("Sig2 invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8])
-		return false
-	}
-
-	return validSig1 && validSig2
 }
 
 func verifyAccTx(tx *protocol.AccTx) bool {
@@ -101,21 +78,13 @@ func verifyAccTx(tx *protocol.AccTx) bool {
 		return false
 	}
 
-	r, s := new(big.Int), new(big.Int)
-	pub1, pub2 := new(big.Int), new(big.Int)
-
-	r.SetBytes(tx.Sig[:32])
-	s.SetBytes(tx.Sig[32:])
-
 	for _, rootAcc := range storage.RootKeys {
-		pub1.SetBytes(rootAcc.Address[:32])
-		pub2.SetBytes(rootAcc.Address[32:])
 
-		pubKey := ecdsa.PublicKey{elliptic.P256(), pub1, pub2}
+		pubKey := crypto.GetPubKeyFromAddressED(rootAcc.Address)
 		txHash := tx.Hash()
 
 		//Only the hash of the pubkey is hashed and verified here
-		if ecdsa.Verify(&pubKey, txHash[:], r, s) == true {
+		if ed25519.Verify(pubKey, txHash[:], tx.Sig[:]) == true {
 			return true
 		}
 	}
@@ -130,18 +99,14 @@ func verifyConfigTx(tx *protocol.ConfigTx) bool {
 
 	//account creation can only be done with a valid priv/pub key which is hard-coded
 	r, s := new(big.Int), new(big.Int)
-	pub1, pub2 := new(big.Int), new(big.Int)
 
 	r.SetBytes(tx.Sig[:32])
 	s.SetBytes(tx.Sig[32:])
 
 	for _, rootAcc := range storage.RootKeys {
-		pub1.SetBytes(rootAcc.Address[:32])
-		pub2.SetBytes(rootAcc.Address[32:])
-
-		pubKey := ecdsa.PublicKey{elliptic.P256(), pub1, pub2}
+		pubKey := crypto.GetPubKeyFromAddressED(rootAcc.Address)
 		txHash := tx.Hash()
-		if ecdsa.Verify(&pubKey, txHash[:], r, s) == true {
+		if ed25519.Verify(pubKey, txHash[:], tx.Sig[:]) == true {
 			return true
 		}
 	}
@@ -156,32 +121,26 @@ func verifyStakeTx(tx *protocol.StakeTx) bool {
 	}
 
 	//Check if account is present in the actual state
-	accFrom := storage.State[tx.Account]
-
-	//Account non existent
-	if accFrom == nil {
-		logger.Println("Account does not exist.")
-		return false
+	acc := storage.State[tx.Account]
+	if acc == nil {
+		// TODO: Requires a Mutex?
+		newAcc := protocol.NewAccount(tx.Account, [32]byte{}, 0, false, [crypto.COMM_KEY_LENGTH_ED]byte{}, nil, nil)
+		acc = &newAcc
+		storage.WriteAccount(acc)
 	}
 
-	accFromHash := protocol.SerializeHashContent(accFrom.Address)
-
-	pub1, pub2 := new(big.Int), new(big.Int)
 	r, s := new(big.Int), new(big.Int)
-
-	pub1.SetBytes(accFrom.Address[:32])
-	pub2.SetBytes(accFrom.Address[32:])
 
 	r.SetBytes(tx.Sig[:32])
 	s.SetBytes(tx.Sig[32:])
 
-	tx.Account = accFromHash
+	tx.Account = acc.Address
 
 	txHash := tx.Hash()
 
-	pubKey := ecdsa.PublicKey{elliptic.P256(), pub1, pub2}
+	pubKey := crypto.GetPubKeyFromAddressED(acc.Address)
 
-	return ecdsa.Verify(&pubKey, txHash[:], r, s)
+	return ed25519.Verify(pubKey, txHash[:], tx.Sig[:])
 }
 
 func verifyAggTx(tx *protocol.AggTx) bool {
