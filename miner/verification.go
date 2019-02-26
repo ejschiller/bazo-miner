@@ -42,10 +42,9 @@ func verifyFundsTx(tx *protocol.FundsTx) bool {
 		logger.Printf("Invalid transaction amount: %v\n", tx.Amount)
 		return false
 	}
-	fmt.Println(tx)
 	//Check if accounts are present in the actual state
-	accFrom := storage.State[protocol.SerializeHashContent(tx.From)]
-	accTo := storage.State[protocol.SerializeHashContent(tx.To)]
+	accFrom := storage.State[tx.From]
+	accTo := storage.State[tx.To]
 
 	//Accounts non existent
 	if accFrom == nil || accTo == nil {
@@ -55,15 +54,12 @@ func verifyFundsTx(tx *protocol.FundsTx) bool {
 	accFromHash := protocol.SerializeHashContent(accFrom.Address)
 	accToHash := protocol.SerializeHashContent(accTo.Address)
 
-
 	txHash := tx.Hash()
 
-	pubKey := crypto.GetPubKeyFromAddressED(tx.From)
-	validation :=ed25519.Verify(pubKey, txHash[:], tx.Sig[:])
-	fmt.Println(validation)
+	pubKey := crypto.GetPubKeyFromAddressED(accFrom.Address)
+	tx.From = accFromHash
+	tx.To = accToHash
 	if ed25519.Verify(pubKey, txHash[:], tx.Sig[:]) && tx.From != tx.To {
-		tx.From = accFromHash
-		tx.To = accToHash
 		return true
 	} else {
 		logger.Printf("Sig invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8])
