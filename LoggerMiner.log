@@ -1,0 +1,646 @@
+INFO: 2019/02/26 13:01:31.777299 blockchain.go:42: 
+
+
+-------------------- START MINER ---------------------
+INFO: 2019/02/26 13:01:31.778917 state.go:199: Block validated: 0 --> 0000000000000000, [0 0 0 0 0 0 0 0] == 0000000000000000, [0 0 0 0 0 0 0 0]
+INFO: 2019/02/26 13:01:31.778959 state.go:211: 
+
+1 block(s) validated. Chain good to go.
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:01:31.779015 state.go:212: Last Block: 
+
+Hash: 0000000000000000			Hash Without Tx: 0000000000000000
+Previous Hash: 0000000000000000		Previous Hash Without Tx: 0000000000000000
+Aggregated: false
+Nonce: 0000000000000000
+Timestamp: 0
+MerkleRoot: 0000000000000000
+Beneficiary: 0000000000000000
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 0
+Commitment Proof: de2f04788157306e
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:01:31.779091 state.go:213: Current STATE: 
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1000, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:01:31.779124 blockchain.go:62: ActiveConfigParams: 
+
+Block Hash: 0000000000000000
+Block size: 5000000
+Difficulty interval: 50
+Fee minimum: 1
+Block interval: 60
+Block reward: 0
+Staking minimum: 1000
+Waiting minimum: 0
+Acceptanced time difference: 60
+Slashing window size: 100
+Slash reward: 2
+Num of previous proofs included in PoS: 5
+
+------------------------------------------------------------------------
+
+BAZO is Running
+
+INFO: 2019/02/26 13:02:01.780092 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:02:02.783221 blockchain.go:85: Block mined (e4a5cee91db0a00d)
+INFO: 2019/02/26 13:02:02.791486 blockchain.go:93: Validated block (mined): 
+Hash: e4a5cee91db0a00d			Hash Without Tx: 3fa550bace28823d
+Previous Hash: 0000000000000000		Previous Hash Without Tx: 0000000000000000
+Aggregated: false
+Nonce: 000000005c752aba
+Timestamp: 1551182522
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 1
+Commitment Proof: 5dc6d6f608d746b7
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+State:
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1000, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 1, Contract: [], ContractVariables: []
+INFO: 2019/02/26 13:02:02.791520 read.go:221: MemPool_________
+INFO: 2019/02/26 13:02:02.791547 read.go:223: d5a086b54e489006bb6d7a9758b235771465478efdee990ffa80221ed60cc59c
+INFO: 2019/02/26 13:02:02.791566 read.go:225: ________________
+INFO: 2019/02/26 13:02:02.791584 read.go:226: Mempool_Size: 1
+INFO: 2019/02/26 13:02:02.791600 read.go:227: ________________
+INFO: 2019/02/26 13:02:02.791883 block.go:185: Added tx (d5a086b54e489006bb6d7a9758b235771465478efdee990ffa80221ed60cc59c) to the AccTxData slice: 
+Header: 0
+Issuer: 419c09f5f2b16d77
+Fee: 1
+PubKey: 16c3096283cc1176
+Sig: 4e8986d76f0c0a5f
+Contract: []
+ContractVariables: []
+INFO: 2019/02/26 13:02:14.794992 blockchain.go:85: Block mined (7da52b6e240b21df)
+INFO: 2019/02/26 13:02:14.800827 blockchain.go:93: Validated block (mined): 
+Hash: 7da52b6e240b21df			Hash Without Tx: 56e845e49f21ea43
+Previous Hash: e4a5cee91db0a00d		Previous Hash Without Tx: 3fa550bace28823d
+Aggregated: false
+Nonce: 000000005c752ac6
+Timestamp: 1551182534
+MerkleRoot: eed11be2219e7c25
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 1 --> [d5a086b54e489006bb6d7a9758b235771465478efdee990ffa80221ed60cc59c]
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 1
+Height: 2
+Commitment Proof: e757c3a9f664c717
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+State:
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 2, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+INFO: 2019/02/26 13:02:14.800873 read.go:221: MemPool_________
+INFO: 2019/02/26 13:02:14.800893 read.go:223: f46e575bf4e1a39604f694bafc8505d654bd27e4128f1a32d37ee879003f9283
+INFO: 2019/02/26 13:02:14.800907 read.go:225: ________________
+INFO: 2019/02/26 13:02:14.800921 read.go:226: Mempool_Size: 1
+INFO: 2019/02/26 13:02:14.800933 read.go:227: ________________
+INFO: 2019/02/26 13:02:30.893472 storage.go:46: Initiate storage aborted: timeout
+INFO: 2019/02/26 13:02:31.784814 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:02:42.332678 blockchain.go:42: 
+
+
+-------------------- START MINER ---------------------
+INFO: 2019/02/26 13:02:42.333915 state.go:199: Block validated: 0 --> 0000000000000000, [0 0 0 0 0 0 0 0] == 0000000000000000, [0 0 0 0 0 0 0 0]
+INFO: 2019/02/26 13:02:42.334776 state.go:199: Block validated: 1 --> e4a5cee91db0a00d, [228 165 206 233 29 176 160 13] == 3fa550bace28823d, [63 165 80 186 206 40 130 61]
+INFO: 2019/02/26 13:02:42.335845 state.go:199: Block validated: 2 --> 7da52b6e240b21df, [125 165 43 110 36 11 33 223] == 56e845e49f21ea43, [86 232 69 228 159 33 234 67]
+INFO: 2019/02/26 13:02:42.335895 state.go:211: 
+
+3 block(s) validated. Chain good to go.
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:02:42.336021 state.go:212: Last Block: 
+
+Hash: 7da52b6e240b21df			Hash Without Tx: 56e845e49f21ea43
+Previous Hash: e4a5cee91db0a00d		Previous Hash Without Tx: 3fa550bace28823d
+Aggregated: false
+Nonce: 000000005c752ac6
+Timestamp: 1551182534
+MerkleRoot: eed11be2219e7c25
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 1 --> [d5a086b54e489006bb6d7a9758b235771465478efdee990ffa80221ed60cc59c]
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 1
+Height: 2
+Commitment Proof: e757c3a9f664c717
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:02:51.087758 state.go:213: Current STATE: 
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 2, Contract: [], ContractVariables: []
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:02:51.088024 blockchain.go:62: ActiveConfigParams: 
+
+Block Hash: 0000000000000000
+Block size: 5000000
+Difficulty interval: 50
+Fee minimum: 1
+Block interval: 60
+Block reward: 0
+Staking minimum: 1000
+Waiting minimum: 0
+Acceptanced time difference: 60
+Slashing window size: 100
+Slash reward: 2
+Num of previous proofs included in PoS: 5
+
+------------------------------------------------------------------------
+
+BAZO is Running
+
+INFO: 2019/02/26 13:03:06.092523 blockchain.go:85: Block mined (4ba97fe90d10ecee)
+INFO: 2019/02/26 13:03:06.100328 blockchain.go:93: Validated block (mined): 
+Hash: 4ba97fe90d10ecee			Hash Without Tx: 1d074a479a30b1f5
+Previous Hash: 7da52b6e240b21df		Previous Hash Without Tx: 56e845e49f21ea43
+Aggregated: false
+Nonce: 000000005c752afa
+Timestamp: 1551182586
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 3
+Commitment Proof: 96c5c87e3b9366fd
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+State:
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 3, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+INFO: 2019/02/26 13:03:06.100434 read.go:221: MemPool_________
+INFO: 2019/02/26 13:03:06.100483 read.go:223: f46e575bf4e1a39604f694bafc8505d654bd27e4128f1a32d37ee879003f9283
+INFO: 2019/02/26 13:03:06.100516 read.go:225: ________________
+INFO: 2019/02/26 13:03:06.100549 read.go:226: Mempool_Size: 1
+INFO: 2019/02/26 13:03:06.100579 read.go:227: ________________
+INFO: 2019/02/26 13:03:15.876673 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:03:26.639830 blockchain.go:85: Block mined (8f8166443995ca8c)
+INFO: 2019/02/26 13:03:37.753819 blockchain.go:42: 
+
+
+-------------------- START MINER ---------------------
+INFO: 2019/02/26 13:03:37.757106 state.go:199: Block validated: 0 --> 0000000000000000, [0 0 0 0 0 0 0 0] == 0000000000000000, [0 0 0 0 0 0 0 0]
+INFO: 2019/02/26 13:03:37.758992 state.go:199: Block validated: 1 --> e4a5cee91db0a00d, [228 165 206 233 29 176 160 13] == 3fa550bace28823d, [63 165 80 186 206 40 130 61]
+INFO: 2019/02/26 13:03:37.761342 state.go:199: Block validated: 2 --> 7da52b6e240b21df, [125 165 43 110 36 11 33 223] == 56e845e49f21ea43, [86 232 69 228 159 33 234 67]
+INFO: 2019/02/26 13:03:37.763016 state.go:199: Block validated: 3 --> 4ba97fe90d10ecee, [75 169 127 233 13 16 236 238] == 1d074a479a30b1f5, [29 7 74 71 154 48 177 245]
+INFO: 2019/02/26 13:03:37.763159 state.go:211: 
+
+4 block(s) validated. Chain good to go.
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:03:37.763345 state.go:212: Last Block: 
+
+Hash: 4ba97fe90d10ecee			Hash Without Tx: 1d074a479a30b1f5
+Previous Hash: 7da52b6e240b21df		Previous Hash Without Tx: 56e845e49f21ea43
+Aggregated: false
+Nonce: 000000005c752afa
+Timestamp: 1551182586
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 3
+Commitment Proof: 96c5c87e3b9366fd
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:03:37.763959 state.go:213: Current STATE: 
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 3, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:03:37.764116 blockchain.go:62: ActiveConfigParams: 
+
+Block Hash: 0000000000000000
+Block size: 5000000
+Difficulty interval: 50
+Fee minimum: 1
+Block interval: 60
+Block reward: 0
+Staking minimum: 1000
+Waiting minimum: 0
+Acceptanced time difference: 60
+Slashing window size: 100
+Slash reward: 2
+Num of previous proofs included in PoS: 5
+
+------------------------------------------------------------------------
+
+BAZO is Running
+
+INFO: 2019/02/26 13:04:07.751045 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:04:29.773209 blockchain.go:85: Block mined (80c08e9decc3e1a0)
+INFO: 2019/02/26 13:04:29.781302 blockchain.go:93: Validated block (mined): 
+Hash: 80c08e9decc3e1a0			Hash Without Tx: 3b23f4e4ded89330
+Previous Hash: 4ba97fe90d10ecee		Previous Hash Without Tx: 1d074a479a30b1f5
+Aggregated: false
+Nonce: 000000005c752b4d
+Timestamp: 1551182669
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 4
+Commitment Proof: 6c155937ca738055
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+State:
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 4, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+INFO: 2019/02/26 13:04:29.781429 read.go:221: MemPool_________
+INFO: 2019/02/26 13:04:29.781481 read.go:223: f46e575bf4e1a39604f694bafc8505d654bd27e4128f1a32d37ee879003f9283
+INFO: 2019/02/26 13:04:29.781514 read.go:225: ________________
+INFO: 2019/02/26 13:04:29.781542 read.go:226: Mempool_Size: 1
+INFO: 2019/02/26 13:04:29.781629 read.go:227: ________________
+INFO: 2019/02/26 13:04:37.952276 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:05:35.252750 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:05:42.255626 blockchain.go:85: Block mined (5608c70184e65bf0)
+INFO: 2019/02/26 13:13:11.987172 blockchain.go:42: 
+
+
+-------------------- START MINER ---------------------
+INFO: 2019/02/26 13:13:11.988857 state.go:199: Block validated: 0 --> 0000000000000000, [0 0 0 0 0 0 0 0] == 0000000000000000, [0 0 0 0 0 0 0 0]
+INFO: 2019/02/26 13:13:11.990994 state.go:199: Block validated: 1 --> e4a5cee91db0a00d, [228 165 206 233 29 176 160 13] == 3fa550bace28823d, [63 165 80 186 206 40 130 61]
+INFO: 2019/02/26 13:13:11.992023 state.go:199: Block validated: 2 --> 7da52b6e240b21df, [125 165 43 110 36 11 33 223] == 56e845e49f21ea43, [86 232 69 228 159 33 234 67]
+INFO: 2019/02/26 13:13:11.993077 state.go:199: Block validated: 3 --> 4ba97fe90d10ecee, [75 169 127 233 13 16 236 238] == 1d074a479a30b1f5, [29 7 74 71 154 48 177 245]
+INFO: 2019/02/26 13:13:11.993805 state.go:199: Block validated: 4 --> 80c08e9decc3e1a0, [128 192 142 157 236 195 225 160] == 3b23f4e4ded89330, [59 35 244 228 222 216 147 48]
+INFO: 2019/02/26 13:13:11.993850 state.go:211: 
+
+5 block(s) validated. Chain good to go.
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:13:11.993905 state.go:212: Last Block: 
+
+Hash: 80c08e9decc3e1a0			Hash Without Tx: 3b23f4e4ded89330
+Previous Hash: 4ba97fe90d10ecee		Previous Hash Without Tx: 1d074a479a30b1f5
+Aggregated: false
+Nonce: 000000005c752b4d
+Timestamp: 1551182669
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 4
+Commitment Proof: 6c155937ca738055
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:13:11.994028 state.go:213: Current STATE: 
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 4, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:13:11.994060 blockchain.go:62: ActiveConfigParams: 
+
+Block Hash: 0000000000000000
+Block size: 5000000
+Difficulty interval: 50
+Fee minimum: 1
+Block interval: 60
+Block reward: 0
+Staking minimum: 1000
+Waiting minimum: 0
+Acceptanced time difference: 60
+Slashing window size: 100
+Slash reward: 2
+Num of previous proofs included in PoS: 5
+
+------------------------------------------------------------------------
+
+BAZO is Running
+
+INFO: 2019/02/26 13:13:41.987589 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:14:11.000850 blockchain.go:85: Block mined (0f33ddaacc619853)
+INFO: 2019/02/26 13:14:11.006727 update.go:12: UPDATE: Write (e4a5cee91db0a00d) into emptyBlockBucket as (3fa550bace28823d)
+INFO: 2019/02/26 13:14:11.008266 blockchain.go:93: Validated block (mined): 
+Hash: 0f33ddaacc619853			Hash Without Tx: 24717cfd19b2b04b
+Previous Hash: 80c08e9decc3e1a0		Previous Hash Without Tx: 3b23f4e4ded89330
+Aggregated: false
+Nonce: 000000005c752d93
+Timestamp: 1551183251
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 5
+Commitment Proof: 1666707bd1c5dd29
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+State:
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 5, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+INFO: 2019/02/26 13:14:11.008303 read.go:221: MemPool_________
+INFO: 2019/02/26 13:14:11.008323 read.go:223: 5123ecf6e55d16536a3d60354ae7d92059eb8fe3ca8d59b87b6f61edd4e376cc
+INFO: 2019/02/26 13:14:11.008339 read.go:225: ________________
+INFO: 2019/02/26 13:14:11.008354 read.go:226: Mempool_Size: 1
+INFO: 2019/02/26 13:14:11.008373 read.go:227: ________________
+INFO: 2019/02/26 13:14:11.008634 block.go:135: Transaction could not be verified: 
+Header: 0
+Fee: 1
+IsStaking: true
+Account: 16c3096283cc1176
+Sig: 24b5f611ec6d6d05
+CommitmentKey: 26119ab354b94701
+INFO: 2019/02/26 13:14:11.990711 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:14:32.011159 blockchain.go:85: Block mined (57d723e1c0c1af44)
+INFO: 2019/02/26 13:14:32.017788 blockchain.go:93: Validated block (mined): 
+Hash: 57d723e1c0c1af44			Hash Without Tx: 4799251e9cd52057
+Previous Hash: 0f33ddaacc619853		Previous Hash Without Tx: 24717cfd19b2b04b
+Aggregated: false
+Nonce: 000000005c752da8
+Timestamp: 1551183272
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 6
+Commitment Proof: 416d37e3bb3ffd66
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+State:
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 6, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+INFO: 2019/02/26 13:14:32.017835 read.go:221: MemPool_________
+INFO: 2019/02/26 13:14:32.017855 read.go:223: 5123ecf6e55d16536a3d60354ae7d92059eb8fe3ca8d59b87b6f61edd4e376cc
+INFO: 2019/02/26 13:14:32.017871 read.go:225: ________________
+INFO: 2019/02/26 13:14:32.017886 read.go:226: Mempool_Size: 1
+INFO: 2019/02/26 13:14:32.017900 read.go:227: ________________
+INFO: 2019/02/26 13:14:32.018144 block.go:135: Transaction could not be verified: 
+Header: 0
+Fee: 1
+IsStaking: true
+Account: 16c3096283cc1176
+Sig: 24b5f611ec6d6d05
+CommitmentKey: 26119ab354b94701
+INFO: 2019/02/26 13:14:36.021398 blockchain.go:85: Block mined (31be7e8c88cbb80a)
+INFO: 2019/02/26 13:14:36.027737 update.go:12: UPDATE: Write (4ba97fe90d10ecee) into emptyBlockBucket as (1d074a479a30b1f5)
+INFO: 2019/02/26 13:14:36.035734 blockchain.go:93: Validated block (mined): 
+Hash: 31be7e8c88cbb80a			Hash Without Tx: 3b32ddac1ccc2071
+Previous Hash: 57d723e1c0c1af44		Previous Hash Without Tx: 4799251e9cd52057
+Aggregated: false
+Nonce: 000000005c752dac
+Timestamp: 1551183276
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 7
+Commitment Proof: b38f6d047d45313e
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+State:
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 0000000000000000, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 7, Contract: [], ContractVariables: []
+INFO: 2019/02/26 13:14:36.036126 read.go:221: MemPool_________
+INFO: 2019/02/26 13:14:36.036725 read.go:223: 5123ecf6e55d16536a3d60354ae7d92059eb8fe3ca8d59b87b6f61edd4e376cc
+INFO: 2019/02/26 13:14:36.037113 read.go:225: ________________
+INFO: 2019/02/26 13:14:36.037412 read.go:226: Mempool_Size: 1
+INFO: 2019/02/26 13:14:36.037663 read.go:227: ________________
+INFO: 2019/02/26 13:14:36.038582 block.go:135: Transaction could not be verified: 
+Header: 0
+Fee: 1
+IsStaking: true
+Account: 16c3096283cc1176
+Sig: 24b5f611ec6d6d05
+CommitmentKey: 26119ab354b94701
+INFO: 2019/02/26 13:14:41.996631 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:15:11.999100 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:15:20.636119 blockchain.go:42: 
+
+
+-------------------- START MINER ---------------------
+INFO: 2019/02/26 13:15:20.646560 state.go:199: Block validated: 0 --> 0000000000000000, [0 0 0 0 0 0 0 0] == 0000000000000000, [0 0 0 0 0 0 0 0]
+INFO: 2019/02/26 13:15:20.649948 state.go:199: Block validated: 1 --> e4a5cee91db0a00d, [228 165 206 233 29 176 160 13] == 3fa550bace28823d, [63 165 80 186 206 40 130 61]
+INFO: 2019/02/26 13:15:20.654851 state.go:199: Block validated: 2 --> 7da52b6e240b21df, [125 165 43 110 36 11 33 223] == 56e845e49f21ea43, [86 232 69 228 159 33 234 67]
+INFO: 2019/02/26 13:15:20.658139 state.go:199: Block validated: 3 --> 4ba97fe90d10ecee, [75 169 127 233 13 16 236 238] == 1d074a479a30b1f5, [29 7 74 71 154 48 177 245]
+INFO: 2019/02/26 13:15:20.662125 state.go:199: Block validated: 4 --> 80c08e9decc3e1a0, [128 192 142 157 236 195 225 160] == 3b23f4e4ded89330, [59 35 244 228 222 216 147 48]
+INFO: 2019/02/26 13:15:20.667387 state.go:199: Block validated: 5 --> 0f33ddaacc619853, [15 51 221 170 204 97 152 83] == 24717cfd19b2b04b, [36 113 124 253 25 178 176 75]
+INFO: 2019/02/26 13:15:20.670222 state.go:199: Block validated: 6 --> 57d723e1c0c1af44, [87 215 35 225 192 193 175 68] == 4799251e9cd52057, [71 153 37 30 156 213 32 87]
+INFO: 2019/02/26 13:15:20.674466 state.go:199: Block validated: 7 --> 31be7e8c88cbb80a, [49 190 126 140 136 203 184 10] == 3b32ddac1ccc2071, [59 50 221 172 28 204 32 113]
+INFO: 2019/02/26 13:15:20.674686 state.go:211: 
+
+8 block(s) validated. Chain good to go.
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:15:20.675075 state.go:212: Last Block: 
+
+Hash: 31be7e8c88cbb80a			Hash Without Tx: 3b32ddac1ccc2071
+Previous Hash: 57d723e1c0c1af44		Previous Hash Without Tx: 4799251e9cd52057
+Aggregated: false
+Nonce: 000000005c752dac
+Timestamp: 1551183276
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 7
+Commitment Proof: b38f6d047d45313e
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:15:20.676259 state.go:213: Current STATE: 
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 7, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:15:20.676573 blockchain.go:62: ActiveConfigParams: 
+
+Block Hash: 0000000000000000
+Block size: 5000000
+Difficulty interval: 50
+Fee minimum: 1
+Block interval: 60
+Block reward: 0
+Staking minimum: 1000
+Waiting minimum: 0
+Acceptanced time difference: 60
+Slashing window size: 100
+Slash reward: 2
+Num of previous proofs included in PoS: 5
+
+------------------------------------------------------------------------
+
+BAZO is Running
+
+INFO: 2019/02/26 13:15:50.633943 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:16:20.637431 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:16:47.939065 blockchain.go:42: 
+
+
+-------------------- START MINER ---------------------
+INFO: 2019/02/26 13:16:47.941207 state.go:199: Block validated: 0 --> 0000000000000000, [0 0 0 0 0 0 0 0] == 0000000000000000, [0 0 0 0 0 0 0 0]
+INFO: 2019/02/26 13:16:47.942084 state.go:199: Block validated: 1 --> e4a5cee91db0a00d, [228 165 206 233 29 176 160 13] == 3fa550bace28823d, [63 165 80 186 206 40 130 61]
+INFO: 2019/02/26 13:16:47.943221 state.go:199: Block validated: 2 --> 7da52b6e240b21df, [125 165 43 110 36 11 33 223] == 56e845e49f21ea43, [86 232 69 228 159 33 234 67]
+INFO: 2019/02/26 13:16:47.944343 state.go:199: Block validated: 3 --> 4ba97fe90d10ecee, [75 169 127 233 13 16 236 238] == 1d074a479a30b1f5, [29 7 74 71 154 48 177 245]
+INFO: 2019/02/26 13:16:47.945556 state.go:199: Block validated: 4 --> 80c08e9decc3e1a0, [128 192 142 157 236 195 225 160] == 3b23f4e4ded89330, [59 35 244 228 222 216 147 48]
+INFO: 2019/02/26 13:16:47.947133 state.go:199: Block validated: 5 --> 0f33ddaacc619853, [15 51 221 170 204 97 152 83] == 24717cfd19b2b04b, [36 113 124 253 25 178 176 75]
+INFO: 2019/02/26 13:16:47.948550 state.go:199: Block validated: 6 --> 57d723e1c0c1af44, [87 215 35 225 192 193 175 68] == 4799251e9cd52057, [71 153 37 30 156 213 32 87]
+INFO: 2019/02/26 13:16:47.949921 state.go:199: Block validated: 7 --> 31be7e8c88cbb80a, [49 190 126 140 136 203 184 10] == 3b32ddac1ccc2071, [59 50 221 172 28 204 32 113]
+INFO: 2019/02/26 13:16:47.949979 state.go:211: 
+
+8 block(s) validated. Chain good to go.
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:16:47.950059 state.go:212: Last Block: 
+
+Hash: 31be7e8c88cbb80a			Hash Without Tx: 3b32ddac1ccc2071
+Previous Hash: 57d723e1c0c1af44		Previous Hash Without Tx: 4799251e9cd52057
+Aggregated: false
+Nonce: 000000005c752dac
+Timestamp: 1551183276
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 7
+Commitment Proof: b38f6d047d45313e
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:16:47.950302 state.go:213: Current STATE: 
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 7, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+
+------------------------------------------------------------------------
+
+INFO: 2019/02/26 13:16:47.950361 blockchain.go:62: ActiveConfigParams: 
+
+Block Hash: 0000000000000000
+Block size: 5000000
+Difficulty interval: 50
+Fee minimum: 1
+Block interval: 60
+Block reward: 0
+Staking minimum: 1000
+Waiting minimum: 0
+Acceptanced time difference: 60
+Slashing window size: 100
+Slash reward: 2
+Num of previous proofs included in PoS: 5
+
+------------------------------------------------------------------------
+
+BAZO is Running
+
+INFO: 2019/02/26 13:17:17.937804 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:17:47.939192 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:17:48.957472 blockchain.go:85: Block mined (cc438fde42176f23)
+INFO: 2019/02/26 13:17:48.965587 update.go:12: UPDATE: Write (80c08e9decc3e1a0) into emptyBlockBucket as (3b23f4e4ded89330)
+INFO: 2019/02/26 13:17:48.967728 blockchain.go:93: Validated block (mined): 
+Hash: cc438fde42176f23			Hash Without Tx: 442a91362ffbb037
+Previous Hash: 31be7e8c88cbb80a		Previous Hash Without Tx: 3b32ddac1ccc2071
+Aggregated: false
+Nonce: 000000005c752e6c
+Timestamp: 1551183468
+MerkleRoot: 0000000000000000
+Beneficiary: 419c09f5f2b16d77
+Amount of fundsTx: 0 --> []
+Amount of accTx: 0 --> []
+Amount of configTx: 0 --> []
+Amount of stakeTx: 0 --> []
+Amount of aggTx: 0 --> []
+Total Transactions in this block: 0
+Height: 8
+Commitment Proof: 0dabbbf0e795b633
+Slashed Address:0000000000000000
+Conflicted Block Hashes 1:0000000000000000  =  0000000000000000
+Conflicted Block Hashes 2:0000000000000000  =  0000000000000000
+State:
+Is root: true, Hash: 419c09f5f2b16d77, Address: 7acae0bba57893ac, Issuer: 0000000000000000, TxCnt: 0, Balance: 1001, IsStaking: true, CommitmentKey: 0c0fd047f1ff4a0e, StakingBlockHeight: 8, Contract: [], ContractVariables: []
+Is root: false, Hash: 414d48c69d244eb5, Address: 16c3096283cc1176, Issuer: 419c09f5f2b16d77, TxCnt: 0, Balance: 0, IsStaking: false, CommitmentKey: 0000000000000000, StakingBlockHeight: 0, Contract: [], ContractVariables: []
+INFO: 2019/02/26 13:17:48.967829 read.go:221: MemPool_________
+INFO: 2019/02/26 13:17:48.967872 read.go:223: f46e575bf4e1a39604f694bafc8505d654bd27e4128f1a32d37ee879003f9283
+INFO: 2019/02/26 13:17:48.967909 read.go:225: ________________
+INFO: 2019/02/26 13:17:48.967940 read.go:226: Mempool_Size: 1
+INFO: 2019/02/26 13:17:48.967968 read.go:227: ________________
+INFO: 2019/02/26 13:18:19.276161 request.go:10: Could not fetch a random peer.
+INFO: 2019/02/26 13:18:42.226465 blockchain.go:85: Block mined (33d044d0a5cf650d)
+INFO: 2019/02/26 13:22:54.774540 request.go:10: Could not fetch a random peer.

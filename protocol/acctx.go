@@ -28,6 +28,7 @@ func ConstrAccTx(header byte, fee uint64, address [32]byte, rootPrivKey ed25519.
 	tx.Fee = fee
 	tx.Contract = contract
 	tx.ContractVariables = contractVariables
+	var tmpPrivKey ed25519.PrivateKey
 	if address != [32]byte{} {
 		copy(tx.PubKey[:], address[:])
 	} else {
@@ -40,8 +41,9 @@ func ConstrAccTx(header byte, fee uint64, address [32]byte, rootPrivKey ed25519.
 				return nil, privKey, err
 			}
 			copy(tx.PubKey[:], newAccAddress[:])
+			tmpPrivKey = privKey
 
-			newAccAddressString = string(tx.PubKey[:32])
+			newAccAddressString = string(newAccAddress[:32])
 		}
 	}
 
@@ -55,7 +57,7 @@ func ConstrAccTx(header byte, fee uint64, address [32]byte, rootPrivKey ed25519.
 
 	sign:= ed25519.Sign(rootPrivKey, txHash[:])
 	copy(tx.Sig[:], sign)
-	return tx, privKey, nil
+	return tx, tmpPrivKey, nil
 }
 
 func (tx *AccTx) Hash() [32]byte {

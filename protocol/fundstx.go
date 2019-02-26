@@ -38,7 +38,7 @@ func ConstrFundsTx(header byte, amount uint64, fee uint64, txCnt uint32, from, t
 	tx.Data = data
 
 	txHash := tx.Hash()
-
+	fmt.Println(sigKey[32:])
 	signature := ed25519.Sign(sigKey, txHash[:])
 	validation := ed25519.Verify(ed25519.PublicKey(tx.From[:]), txHash[:], signature)
 	fmt.Println(validation)
