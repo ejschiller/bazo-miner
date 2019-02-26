@@ -1,12 +1,10 @@
 package protocol
 
 import (
-	"crypto/ecdsa"
-	"crypto/rand"
-	"crypto/rsa"
 	"encoding/binary"
 	"fmt"
 	"github.com/bazo-blockchain/bazo-miner/crypto"
+	"golang.org/x/crypto/ed25519"
 )
 
 const (
@@ -24,7 +22,7 @@ type StakeTx struct {
 	CommitmentKey [crypto.COMM_KEY_LENGTH_ED]byte // the modulus N of the RSA public key
 }
 
-func ConstrStakeTx(header byte, fee uint64, isStaking bool, account [32]byte, signKey *ecdsa.PrivateKey, commPubKey *rsa.PublicKey) (tx *StakeTx, err error) {
+func ConstrStakeTx(header byte, fee uint64, isStaking bool, account [32]byte, signKey ed25519.PrivateKey, commPubKey ed25519.PublicKey) (tx *StakeTx, err error) {
 
 	tx = new(StakeTx)
 
@@ -33,17 +31,18 @@ func ConstrStakeTx(header byte, fee uint64, isStaking bool, account [32]byte, si
 	tx.IsStaking = isStaking
 	tx.Account = account
 
-	copy(tx.CommitmentKey[:], commPubKey.N.Bytes())
+	tx.CommitmentKey = crypto.GetAddressFromPubKeyED(commPubKey)
 
 	txHash := tx.Hash()
 
-	r, s, err := ecdsa.Sign(rand.Reader, signKey, txHash[:])
+	sign := ed25519.Sign(signKey, txHash[:])
+
+	copy(tx.Sig[:],sign[:])
+
 	if err != nil {
 		return nil, err
 	}
 
-	copy(tx.Sig[32-len(r.Bytes()):32], r.Bytes())
-	copy(tx.Sig[64-len(s.Bytes()):], s.Bytes())
 
 	return tx, nil
 }

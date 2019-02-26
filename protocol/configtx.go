@@ -2,10 +2,9 @@ package protocol
 
 import (
 	"bytes"
-	"crypto/ecdsa"
-	"crypto/rand"
 	"encoding/binary"
 	"fmt"
+	"golang.org/x/crypto/ed25519"
 )
 
 const (
@@ -62,7 +61,7 @@ type ConfigTx struct {
 	Sig     [64]byte
 }
 
-func ConstrConfigTx(header byte, id uint8, payload uint64, fee uint64, txCnt uint8, rootPrivKey *ecdsa.PrivateKey) (tx *ConfigTx, err error) {
+func ConstrConfigTx(header byte, id uint8, payload uint64, fee uint64, txCnt uint8, rootPrivKey ed25519.PrivateKey) (tx *ConfigTx, err error) {
 
 	tx = new(ConfigTx)
 	tx.Header = header
@@ -73,14 +72,10 @@ func ConstrConfigTx(header byte, id uint8, payload uint64, fee uint64, txCnt uin
 
 	txHash := tx.Hash()
 
-	r, s, err := ecdsa.Sign(rand.Reader, rootPrivKey, txHash[:])
+	sign := ed25519.Sign(rootPrivKey, txHash[:])
 
-	if err != nil {
-		return nil, err
-	}
 
-	copy(tx.Sig[32-len(r.Bytes()):32], r.Bytes())
-	copy(tx.Sig[64-len(s.Bytes()):], s.Bytes())
+	copy(tx.Sig[:], sign)
 
 	return tx, nil
 }
