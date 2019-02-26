@@ -12,12 +12,11 @@ func GetGenerateCommitmentCommand() cli.Command {
 		Usage:	"generate a new pair of commitment keys",
 		Action:	func(c *cli.Context) error {
 			filename := c.String("file")
-			privKey, err := crypto.ExtractRSAKeyFromFile(filename)
+			privKey, err := crypto.ExtractSeedKeyFromFile(filename)
 
 			fmt.Printf("Commitment generated successfully.\n")
-			fmt.Printf("PubKeyE: %x\n", privKey.PublicKey.E)
-			fmt.Printf("PubKeyN: %x\n", privKey.PublicKey.N)
-			fmt.Printf("PrivKey: %x\n", privKey.D)
+			fmt.Printf("PubKey: %x\n", privKey[32:])
+			fmt.Printf("PrivKey: %x\n", privKey)
 
 			return err
 		},

@@ -12,12 +12,11 @@ func GetGenerateWalletCommand() cli.Command {
 		Usage:	"generate a new pair of wallet keys",
 		Action:	func(c *cli.Context) error {
 			filename := c.String("file")
-			privKey, err := crypto.ExtractECDSAKeyFromFile(filename)
+			privKey, err := crypto.ExtractEDPrivKeyFromFile(filename)
 
 			fmt.Printf("Wallet generated successfully.\n")
-			fmt.Printf("PubKeyX: %x\n", privKey.PublicKey.X)
-			fmt.Printf("PubKeyY: %x\n", privKey.PublicKey.Y)
-			fmt.Printf("PrivKey: %x\n", privKey.D)
+			fmt.Printf("PubKey: %x\n", privKey[32:])
+			fmt.Printf("PrivKey: %x\n", privKey)
 
 			return err
 		},

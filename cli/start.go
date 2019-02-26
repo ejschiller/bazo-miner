@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"crypto/ecdsa"
 	"fmt"
 	"github.com/bazo-blockchain/bazo-miner/crypto"
 	"github.com/bazo-blockchain/bazo-miner/miner"
