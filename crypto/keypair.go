@@ -151,7 +151,7 @@ func CreateEDKeyFile(filename string) (err error) {
 	if err != nil {
 		return err
 	}
-
+	fmt.Print("PUBKEY ->", pubKey)
 	//var pubKey [64]byte
 	_, err1 := file.WriteString(hex.EncodeToString(pubKey)+ "\n")
 	_, err2 := file.WriteString(hex.EncodeToString(privKey[0:32])+ "\n")

@@ -5,6 +5,7 @@ import (
 	"github.com/bazo-blockchain/bazo-miner/crypto"
 	"golang.org/x/crypto/ed25519"
 	"math/big"
+	"reflect"
 
 	"github.com/bazo-blockchain/bazo-miner/protocol"
 	"github.com/bazo-blockchain/bazo-miner/storage"
@@ -43,32 +44,29 @@ func verifyFundsTx(tx *protocol.FundsTx) bool {
 		logger.Printf("Invalid transaction amount: %v\n", tx.Amount)
 		return false
 	}
-
+	fmt.Println(tx)
 	//Check if accounts are present in the actual state
-	accFrom := storage.State[tx.From]
-	accTo := storage.State[tx.To]
+	//accFrom := storage.State[tx.From]
+	//accTo := storage.State[tx.To]
 
 	//Accounts non existent
-	if accFrom == nil || accTo == nil {
-		logger.Printf("Account non existent. From: %v\nTo: %v\n", accFrom, accTo)
-		return false
-	}
-
-	accFromHash := protocol.SerializeHashContent(accFrom.Address)
-	accToHash := protocol.SerializeHashContent(accTo.Address)
-
-
-	tx.From = accFromHash
-	tx.To = accToHash
+	//if accFrom == nil || accTo == nil {
+	//	logger.Printf("Account non existent. From: %v\nTo: %v\n", accFrom, accTo)
+	//	return false
+	//}
+	//accFromHash := protocol.SerializeHashContent(accFrom.Address)
+	//accToHash := protocol.SerializeHashContent(accTo.Address)
 
 	txHash := tx.Hash()
 
 	pubKey := crypto.GetPubKeyFromAddressED(tx.From)
-	if ed25519.Verify(pubKey, txHash[:], tx.Sig[:]) && tx.From != tx.To {
+	validation :=ed25519.Verify(pubKey, txHash[:], tx.Sig[:])
+	fmt.Println(validation)
+	if ed25519.Verify(pubKey, txHash[:], tx.Sig[:]) && !reflect.DeepEqual(tx.From, tx.To) {
 		return true
 	} else {
-		logger.Printf("Sig invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8])
-		FileConnectionsLog.WriteString(fmt.Sprintf("Sig invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8]))
+		logger.Printf("Sig invalid. FromHash: %x\nToHash: %x\n", tx.From[0:8], tx.To[0:8])
+		FileConnectionsLog.WriteString(fmt.Sprintf("Sig invalid. FromHash: %x\nToHash: %x\n", tx.From[0:8], tx.To[0:8]))
 		return false
 	}
 }

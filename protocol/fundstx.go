@@ -40,6 +40,8 @@ func ConstrFundsTx(header byte, amount uint64, fee uint64, txCnt uint32, from, t
 	txHash := tx.Hash()
 
 	signature := ed25519.Sign(sigKey, txHash[:])
+	validation := ed25519.Verify(ed25519.PublicKey(tx.From[:]), txHash[:], signature)
+	fmt.Println(validation)
 	if signature == nil {
 		return tx, nil
 	}
@@ -116,8 +118,7 @@ func (tx FundsTx) String() string {
 			"TxCnt: %v\n"+
 			"From: %x\n"+
 			"To: %x\n"+
-			"Sig1: %x\n"+
-			"Sig2: %x\n"+
+			"Sig: %x\n"+
 			"Data: %v\n",
 		tx.Header,
 		tx.Amount,

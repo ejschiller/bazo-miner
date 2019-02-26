@@ -187,32 +187,32 @@ func addAccTx(b *protocol.Block, tx *protocol.AccTx) error {
 }
 
 func addFundsTx(b *protocol.Block, tx *protocol.FundsTx) error {
+
 	//Checking if the sender account is already in the local state copy. If not and account exist, create local copy.
-	//If account does not exist in state, abort.
 	if _, exists := b.StateCopy[tx.From]; !exists {
 		if acc := storage.State[tx.From]; acc != nil {
-			hash := protocol.SerializeHashContent(acc.Address)
-			if hash == tx.From {
+			if acc.Address == tx.From {
 				newAcc := protocol.Account{}
 				newAcc = *acc
 				b.StateCopy[tx.From] = &newAcc
 			}
 		} else {
-			return errors.New(fmt.Sprintf("Sender account not present in the state: %x\n", tx.From))
+			newFromAcc := protocol.NewAccount(tx.From, [32]byte{}, 0, false, [crypto.COMM_KEY_LENGTH_ED]byte{}, nil, nil)
+			b.StateCopy[tx.From] = &newFromAcc
 		}
 	}
 
 	//Vice versa for receiver account.
 	if _, exists := b.StateCopy[tx.To]; !exists {
 		if acc := storage.State[tx.To]; acc != nil {
-			hash := protocol.SerializeHashContent(acc.Address)
-			if hash == tx.To {
+			if acc.Address == tx.To {
 				newAcc := protocol.Account{}
 				newAcc = *acc
 				b.StateCopy[tx.To] = &newAcc
 			}
 		} else {
-			return errors.New(fmt.Sprintf("Receiver account not present in the state: %x\n", tx.To))
+			newToAcc := protocol.NewAccount(tx.To, [32]byte{}, 0, false, [crypto.COMM_KEY_LENGTH_ED]byte{}, nil, nil)
+			b.StateCopy[tx.To] = &newToAcc
 		}
 	}
 
