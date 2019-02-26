@@ -41,8 +41,6 @@ func GetRootAccount(hash [32]byte) (acc *protocol.Account, err error) {
 }
 
 func IsRootKey(hash [32]byte) bool {
-	fmt.Println(RootKeys)
-	fmt.Println(hash)
 	_, exists := RootKeys[hash]
 	return exists
 }

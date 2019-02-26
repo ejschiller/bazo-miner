@@ -55,8 +55,6 @@ func verifyFundsTx(tx *protocol.FundsTx) bool {
 	accFromHash := protocol.SerializeHashContent(accFrom.Address)
 	accToHash := protocol.SerializeHashContent(accTo.Address)
 
-	tx.From = accFromHash
-	tx.To = accToHash
 
 	txHash := tx.Hash()
 
@@ -64,6 +62,8 @@ func verifyFundsTx(tx *protocol.FundsTx) bool {
 	validation :=ed25519.Verify(pubKey, txHash[:], tx.Sig[:])
 	fmt.Println(validation)
 	if ed25519.Verify(pubKey, txHash[:], tx.Sig[:]) && tx.From != tx.To {
+		tx.From = accFromHash
+		tx.To = accToHash
 		return true
 	} else {
 		logger.Printf("Sig invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8])

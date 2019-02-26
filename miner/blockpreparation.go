@@ -47,7 +47,6 @@ func prepareBlock(block *protocol.Block) {
 			(int(nonAggregatableTxCounter)*int(len(tx.Hash()))) > int(activeParameters.Block_size){
 			break
 		}
-
 		err := addTx(block, tx)
 		if err != nil {
 			//If the tx is invalid, we remove it completely, prevents starvation in the mempool.

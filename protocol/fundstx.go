@@ -88,7 +88,7 @@ func (tx *FundsTx) Encode() (encodedTx []byte) {
 		TxCnt:  tx.TxCnt,
 		From:   tx.From,
 		To:     tx.To,
-		Sig:   tx.Sig,
+		Sig:   	tx.Sig,
 		Data:   tx.Data,
 	}
 	buffer := new(bytes.Buffer)

@@ -187,39 +187,38 @@ func addAccTx(b *protocol.Block, tx *protocol.AccTx) error {
 }
 
 func addFundsTx(b *protocol.Block, tx *protocol.FundsTx) error {
-
 	//Checking if the sender account is already in the local state copy. If not and account exist, create local copy.
+	//If account does not exist in state, abort.
 	if _, exists := b.StateCopy[tx.From]; !exists {
 		if acc := storage.State[tx.From]; acc != nil {
-			if acc.Address == tx.From {
+			hash := protocol.SerializeHashContent(acc.Address)
+			if hash == tx.From {
 				newAcc := protocol.Account{}
 				newAcc = *acc
 				b.StateCopy[tx.From] = &newAcc
 			}
 		} else {
-			newFromAcc := protocol.NewAccount(tx.From, [32]byte{}, 0, false, [crypto.COMM_KEY_LENGTH_ED]byte{}, nil, nil)
-			b.StateCopy[tx.From] = &newFromAcc
+			return errors.New(fmt.Sprintf("Sender account not present in the state: %x\n", tx.From))
 		}
 	}
 
 	//Vice versa for receiver account.
 	if _, exists := b.StateCopy[tx.To]; !exists {
 		if acc := storage.State[tx.To]; acc != nil {
-			if acc.Address == tx.To {
+			hash := protocol.SerializeHashContent(acc.Address)
+			if hash == tx.To {
 				newAcc := protocol.Account{}
 				newAcc = *acc
 				b.StateCopy[tx.To] = &newAcc
 			}
 		} else {
-			newToAcc := protocol.NewAccount(tx.To, [32]byte{}, 0, false, [crypto.COMM_KEY_LENGTH_ED]byte{}, nil, nil)
-			b.StateCopy[tx.To] = &newToAcc
+			return errors.New(fmt.Sprintf("Receiver account not present in the state: %x\n", tx.To))
 		}
 	}
 
 	//Root accounts are exempt from balance requirements. All other accounts need to have (at least)
 	//fee + amount to spend as balance available.
-
-	if !storage.IsRootKey(protocol.SerializeHashContent(tx.From)) {
+	if !storage.IsRootKey(tx.From) {
 		if (tx.Amount + tx.Fee) > b.StateCopy[tx.From].Balance {
 			return errors.New("Not enough funds to complete the transaction!")
 		}
@@ -263,7 +262,8 @@ func addFundsTx(b *protocol.Block, tx *protocol.FundsTx) error {
 	//b.FundsTxData = append(b.FundsTxData, tx.Hash())
 
 	//storage.FundsTxBeforeAggregation = append(storage.FundsTxBeforeAggregation, tx)
-	storage.WriteFundsTxBeforeAggregation(tx)
+	//storage.WriteFundsTxBeforeAggregation(tx)
+	b.FundsTxData = append(b.FundsTxData, tx.Hash())
 	//logger.Printf("Added tx (%x) to the slice: %v", tx.Hash(), *tx)
 	//logger.Printf("From: %x To: %x, TxCnt: %d  --  %x", tx.From[0:4], tx.To[0:4], tx.TxCnt, tx.Hash())
 
@@ -286,7 +286,6 @@ func splitSortedAggregatableTransactions(b *protocol.Block){
 	moreTransactionsToAggregate := true
 
 	for moreTransactionsToAggregate {
-
 		//Get Sender and Receiver which are most common
 		maxSender, addressSender := getMaxKeyAndValueFormMap(storage.DifferentSenders)
 		maxReceiver, addressReceiver := getMaxKeyAndValueFormMap(storage.DifferentReceivers)
