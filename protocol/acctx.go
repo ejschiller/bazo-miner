@@ -2,11 +2,10 @@ package protocol
 
 import (
 	"bytes"
-	"crypto/ecdsa"
-	"crypto/elliptic"
 	"crypto/rand"
 	"encoding/gob"
 	"fmt"
+	"golang.org/x/crypto/ed25519"
 )
 
 const (
@@ -23,7 +22,7 @@ type AccTx struct {
 	ContractVariables []ByteArray
 }
 
-func ConstrAccTx(header byte, fee uint64, address [32]byte, rootPrivKey *ecdsa.PrivateKey, contract []byte, contractVariables []ByteArray) (tx *AccTx, newAccAddress *ecdsa.PrivateKey, err error) {
+func ConstrAccTx(header byte, fee uint64, address [32]byte, rootPrivKey ed25519.PrivateKey, contract []byte, contractVariables []ByteArray) (tx *AccTx, newAccAddress ed25519.PublicKey, err error) {
 	tx = new(AccTx)
 	tx.Header = header
 	tx.Fee = fee
@@ -35,33 +34,28 @@ func ConstrAccTx(header byte, fee uint64, address [32]byte, rootPrivKey *ecdsa.P
 	} else {
 		var newAccAddressString string
 		//Check if string representation of account address is 128 long. Else there will be problems when doing REST calls.
-		for len(newAccAddressString) != 128 {
-			newAccAddress, err = ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-			newAccPub1, newAccPub2 := newAccAddress.PublicKey.X.Bytes(), newAccAddress.PublicKey.Y.Bytes()
-			copy(tx.PubKey[32-len(newAccPub1):32], newAccPub1)
-			copy(tx.PubKey[64-len(newAccPub2):], newAccPub2)
+		for len(newAccAddressString) != 32 {
+			//newAccAddress, err = ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+			newAccAddress, _, err := ed25519.GenerateKey(rand.Reader)
+			if err != nil{
+				return nil, nil, err
+			}
+			copy(tx.PubKey[:], newAccAddress[:])
 
-			newAccAddressString = newAccAddress.X.Text(16) + newAccAddress.Y.Text(16)
+			newAccAddressString = string(newAccAddress[:])
 		}
 	}
 
-	var rootPublicKey [64]byte
-	rootPubKey1, rootPubKey2 := rootPrivKey.PublicKey.X.Bytes(), rootPrivKey.PublicKey.Y.Bytes()
-	copy(rootPublicKey[32-len(rootPubKey1):32], rootPubKey1)
-	copy(rootPublicKey[64-len(rootPubKey2):], rootPubKey2)
+	var rootPublicKey [32]byte
+	copy(rootPublicKey[:], rootPrivKey[32:])
 
 	issuer := SerializeHashContent(rootPublicKey)
 	copy(tx.Issuer[:], issuer[:])
 
 	txHash := tx.Hash()
 
-	r, s, err := ecdsa.Sign(rand.Reader, rootPrivKey, txHash[:])
-	if err != nil {
-		return nil, nil, err
-	}
-
-	copy(tx.Sig[32-len(r.Bytes()):32], r.Bytes())
-	copy(tx.Sig[64-len(s.Bytes()):], s.Bytes())
+	sign:= ed25519.Sign(rootPrivKey, txHash[:])
+	copy(tx.Sig[:], sign)
 
 	return tx, newAccAddress, nil
 }
