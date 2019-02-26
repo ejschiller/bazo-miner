@@ -6,6 +6,7 @@ import (
 	"github.com/bazo-blockchain/bazo-miner/storage"
 	"strconv"
 	"sync"
+	"time"
 )
 
 var (
@@ -76,6 +77,46 @@ func processTxBrdcst(p *peer, payload []byte, brdcstType uint8) {
 	//Write to mempool and rebroadcast
 	//logger.Printf("Writing transaction (%x) in the mempool.\n", tx.Hash())
 	storage.WriteOpenTx(tx)
+	toBrdcst := BuildPacket(brdcstType, payload)
+	minerBrdcstMsg <- toBrdcst
+}
+
+func processIotTxBrdcst(p *peer, payload []byte, brdcstType uint8) {
+	var tx protocol.Iot
+	//Make sure the transaction can be properly decoded, verification is done at a later stage to reduce latency
+	switch brdcstType {
+	case IOTTX_BRDCST:
+		var sTx *protocol.IotTx
+		sTx = sTx.Decode(payload)
+		if sTx == nil {
+			return
+		}
+		tx = sTx
+	}
+
+	//Response tx acknowledgment if the peer is a client
+	if !peers.minerConns[p] {
+		//TODO: check if TX_BRDCST_ACK can still be used here
+		packet := BuildPacket(TX_BRDCST_ACK, nil)
+		sendData(p, packet)
+	}
+
+	if storage.ReadOpenTx(tx.Hash()) != nil {
+		logger.Printf("Received  IoT transaction (%x) already in the mempool.\n", tx.Hash())
+		return
+	}
+	if storage.ReadClosedTx(tx.Hash()) != nil {
+		logger.Printf("Received  IoT transaction (%x) already validated.\n", tx.Hash())
+		return
+	}
+
+	//Write to mempool and rebroadcast
+	logger.Printf("Writing IoT transaction (%x) in the mempool.\n", tx.Hash())
+	logger.Printf("Writing IoT transaction at time: %d\n", time.Now().Unix())
+
+	storage.WriteOpenTx(tx)
+
+
 	toBrdcst := BuildPacket(brdcstType, payload)
 	minerBrdcstMsg <- toBrdcst
 }

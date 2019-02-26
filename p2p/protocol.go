@@ -49,6 +49,10 @@ const (
 	CLIENT_PING = 102
 	CLIENT_PONG = 103
 
+	IOTTX_BRDCST	= 105
+	IOTTX_REQ		= 106
+	IOTTX_RES		= 107
+
 	//Used to signal error
 	NOT_FOUND = 110
 )

@@ -28,3 +28,7 @@
 # to others into the folder tmp.
 keystore/
 bazo-miner
+*.txt
+*.db
+*.db.lock
+*.log

@@ -48,6 +48,10 @@ func InitLogging() {
 	LogMapping[48] = "INTERMEDIATE_NODES_RES"
 	LogMapping[49] = "AGGTX_RES"
 
+	LogMapping[105] = "IOTTX_BRDCST"
+	LogMapping[106] = "IOTTX_REQ"
+	LogMapping[107] = "IOTTX_RES"
+
 	LogMapping[130] = "NEIGHBOR_REQ"
 	LogMapping[140] = "NEIGHBOR_RES"
 

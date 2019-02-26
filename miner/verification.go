@@ -27,21 +27,23 @@ func verify(tx protocol.Transaction) bool {
 		verified = verifyStakeTx(tx.(*protocol.StakeTx))
 	case *protocol.AggTx:
 		verified = verifyAggTx(tx.(*protocol.AggTx))
+	case *protocol.IotTx:
+		verified = verifyIotTx(tx.(*protocol.IotTx))
 	}
 
 	return verified
 }
 
-func verifyFundsTx(tx *protocol.FundsTx) bool {
+func verifyIotTx(tx *protocol.IotTx) bool {
 	if tx == nil {
 		return false
 	}
 
 	//fundsTx only makes sense if amount > 0
-	if tx.Amount == 0 || tx.Amount > MAX_MONEY {
-		logger.Printf("Invalid transaction amount: %v\n", tx.Amount)
-		return false
-	}
+	//if tx.Amount == 0 || tx.Amount > MAX_MONEY {
+	//	logger.Printf("Invalid transaction amount: %v\n", tx.Amount)
+	//	return false
+	//}
 	//Check if accounts are present in the actual state
 	accFrom := storage.State[tx.From]
 	accTo := storage.State[tx.To]
@@ -152,6 +154,42 @@ func verifyAggTx(tx *protocol.AggTx) bool {
 	//}
 
 	return true
+}
+
+func verifyFundsTx(tx *protocol.FundsTx) bool {
+	if tx == nil {
+		return false
+	}
+
+	//fundsTx only makes sense if amount > 0
+	if tx.Amount == 0 || tx.Amount > MAX_MONEY {
+		logger.Printf("Invalid transaction amount: %v\n", tx.Amount)
+		return false
+	}
+	//Check if accounts are present in the actual state
+	accFrom := storage.State[tx.From]
+	accTo := storage.State[tx.To]
+
+	//Accounts non existent
+	if accFrom == nil || accTo == nil {
+		logger.Printf("Account non existent. From: %v\nTo: %v\n", accFrom, accTo)
+		return false
+	}
+	accFromHash := protocol.SerializeHashContent(accFrom.Address)
+	accToHash := protocol.SerializeHashContent(accTo.Address)
+
+	txHash := tx.Hash()
+
+	pubKey := crypto.GetPubKeyFromAddressED(accFrom.Address)
+	tx.From = accFromHash
+	tx.To = accToHash
+	if ed25519.Verify(pubKey, txHash[:], tx.Sig[:]) && tx.From != tx.To {
+		return true
+	} else {
+		logger.Printf("Sig invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8])
+		FileConnectionsLog.WriteString(fmt.Sprintf("Sig invalid. FromHash: %x\nToHash: %x\n", tx.From[0:8], tx.To[0:8]))
+		return false
+	}
 }
 
 //Returns true if id is in the list of possible ids and rational value for payload parameter.
