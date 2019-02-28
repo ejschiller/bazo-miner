@@ -21,6 +21,8 @@ var (
 	ConfigTxChan 		= make(chan *protocol.ConfigTx)
 	StakeTxChan  		= make(chan *protocol.StakeTx)
 	AggTxChan    	= make(chan *protocol.AggTx)
+	IoTTxChan    		= make(chan *protocol.IotTx)
+
 
 	BlockReqChan = make(chan []byte)
 
@@ -144,7 +146,15 @@ func forwardTxReqToMiner(p *peer, payload []byte, txType uint8) {
 			}
 		}
 		aggTxSashMutex.Unlock()
+	case IOTTX_RES:
+		var IoTTx *protocol.IotTx
+		IoTTx = IoTTx.Decode(payload)
+		if IoTTx == nil {
+			return
+		}
+		IoTTxChan <- IoTTx
 	}
+
 }
 
 func forwardBlockReqToMiner(p *peer, payload []byte) {

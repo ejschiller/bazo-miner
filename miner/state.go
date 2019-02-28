@@ -175,12 +175,12 @@ func initState() (initialBlock *protocol.Block, err error) {
 		//Do not validate the genesis block, since a lot of properties are set to nil
 		if blockToValidate.Hash != [32]byte{} {
 			//Fetching payload data from the txs (if necessary, ask other miners)
-			accTxs, fundsTxs, configTxs, stakeTxs, aggTxs, err := preValidate(blockToValidate, true)
+			accTxs, fundsTxs, configTxs, stakeTxs, aggTxs, iotTxs, err := preValidate(blockToValidate, true)
 			if err != nil {
 				return nil, errors.New(fmt.Sprintf("Block (%x) could not be prevalidated: %v\n", blockToValidate.Hash[0:8], err))
 			}
 
-			blockDataMap[blockToValidate.Hash] = blockData{accTxs, fundsTxs, configTxs, stakeTxs, aggTxs, blockToValidate}
+			blockDataMap[blockToValidate.Hash] = blockData{accTxs, fundsTxs, configTxs, stakeTxs, aggTxs, iotTxs,blockToValidate}
 
 			err = validateState(blockDataMap[blockToValidate.Hash])
 			if err != nil {
@@ -189,7 +189,7 @@ func initState() (initialBlock *protocol.Block, err error) {
 
 			postValidate(blockDataMap[blockToValidate.Hash], true)
 		} else {
-			blockDataMap[blockToValidate.Hash] = blockData{nil, nil, nil, nil, nil, blockToValidate}
+			blockDataMap[blockToValidate.Hash] = blockData{nil, nil, nil, nil, nil, nil, blockToValidate}
 
 			postValidate(blockDataMap[blockToValidate.Hash], true)
 		}
@@ -245,6 +245,32 @@ func accStateChange(txSlice []*protocol.AccTx) error {
 
 			//Second bit set, delete account from root account
 			delete(storage.RootKeys, accHash)
+		}
+	}
+
+	return nil
+}
+
+func iotStateChange(txSlice []*protocol.IotTx) error {
+	for _, tx := range txSlice {
+		_, exists := storage.State[protocol.SerializeHashContent(tx.From)]
+		if !exists{
+			newAcc := protocol.NewAccount(tx.From, tx.From, 0, false, [crypto.COMM_KEY_LENGTH_ED]byte{}, nil, nil)
+			newAccHash := newAcc.Hash()
+			acc, _ := storage.GetAccount(newAccHash)
+			if acc != nil {
+				//Shouldn't happen, because this should have been prevented when adding an accTx to the block
+				return errors.New("Address already exists in the state.")
+			}
+
+			//If acc does not exist, write to state
+			storage.State[newAccHash] = &newAcc
+			accHash := protocol.SerializeHashContent(tx.From)
+			_, err := storage.GetAccount(accHash)
+			if err != nil {
+				return err
+			}
+
 		}
 	}
 

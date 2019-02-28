@@ -214,6 +214,16 @@ func ReadClosedTx(hash [32]byte) (transaction protocol.Transaction) {
 		return aggTx.Decode(encodedTx)
 	}
 
+	var ioTTx *protocol.IotTx
+	db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("closediotts"))
+		encodedTx = b.Get(hash[:])
+		return nil
+	})
+	if encodedTx != nil {
+		return ioTTx.Decode(encodedTx)
+	}
+
 	return nil
 }
 

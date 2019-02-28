@@ -95,6 +95,8 @@ func (f openTxs) Less(i, j int) bool {
 		return true
 	case *protocol.AggTx:
 		return true
+	case *protocol.IotTx:
+		return true
 	}
 
 	switch f[j].(type) {
@@ -105,6 +107,8 @@ func (f openTxs) Less(i, j int) bool {
 	case *protocol.StakeTx:
 		return false
 	case *protocol.AggTx:
+		return false
+	case *protocol.IotTx:
 		return false
 	}
 

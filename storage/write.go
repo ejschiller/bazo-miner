@@ -107,7 +107,10 @@ func WriteClosedTx(transaction protocol.Transaction) (err error) {
 		bucket = "closedstakes"
 	case *protocol.AggTx:
 		bucket = "closedaggregations"
+	case *protocol.IotTx:
+		bucket = "closediotts"
 	}
+
 
 	hash := transaction.Hash()
 	err = db.Update(func(tx *bolt.Tx) error {

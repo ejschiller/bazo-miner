@@ -41,6 +41,8 @@ type Block struct {
 	NrFundsTx             uint16
 	NrStakeTx             uint16
 	NrAggTx         	  uint16
+	NrIoTTx         	  uint16
+
 	SlashedAddress        [32]byte
 	CommitmentProof       [crypto.COMM_PROOF_LENGTH_ED]byte
 	ConflictingBlockHash1 [32]byte
@@ -54,6 +56,8 @@ type Block struct {
 	ConfigTxData 		 [][32]byte
 	StakeTxData  		 [][32]byte
 	AggTxData  	 		 [][32]byte
+	IoTTxData  	 		 [][32]byte
+
 }
 
 func NewBlock(prevHash [32]byte, height uint32) *Block {
@@ -184,6 +188,7 @@ func (block *Block) GetBodySize() uint64 {
 		reflect.TypeOf(block.NrFundsTx).Size() +
 		reflect.TypeOf(block.NrStakeTx).Size() +
 		reflect.TypeOf(block.NrAggTx).Size() +
+		reflect.TypeOf(block.NrIoTTx).Size() +
 		reflect.TypeOf(block.SlashedAddress).Size() +
 		reflect.TypeOf(block.CommitmentProof).Size() +
 		reflect.TypeOf(block.ConflictingBlockHash1).Size() +
@@ -202,7 +207,8 @@ func (block *Block) GetTxDataSize() uint64 {
 		int(block.NrFundsTx)*HASH_LEN +
 		int(block.NrConfigTx)*HASH_LEN +
 		int(block.NrStakeTx)*HASH_LEN +
-		int(block.NrAggTx)*HASH_LEN
+		int(block.NrAggTx)*HASH_LEN +
+		int(block.NrIoTTx)*HASH_LEN
 
 	return uint64(size)
 }
@@ -237,7 +243,8 @@ func (block *Block) Encode() []byte {
 		NrFundsTx:             			block.NrFundsTx,
 		NrConfigTx:            			block.NrConfigTx,
 		NrStakeTx:             			block.NrStakeTx,
-		NrAggTx:         			block.NrAggTx,
+		NrAggTx:         				block.NrAggTx,
+		NrIoTTx:						block.NrIoTTx,
 		NrElementsBF:          			block.NrElementsBF,
 		BloomFilter:           			block.BloomFilter,
 		SlashedAddress:        			block.SlashedAddress,
@@ -252,7 +259,9 @@ func (block *Block) Encode() []byte {
 		FundsTxData:  		   			block.FundsTxData,
 		ConfigTxData: 		   			block.ConfigTxData,
 		StakeTxData:  		   			block.StakeTxData,
-		AggTxData:	   			block.AggTxData,
+		AggTxData:	   					block.AggTxData,
+		IoTTxData:	   					block.IoTTxData,
+
 	}
 
 	buffer := new(bytes.Buffer)
@@ -310,6 +319,7 @@ func (block Block) String() string {
 		"Amount of configTx: %v --> %x\n"+
 		"Amount of stakeTx: %v --> %x\n"+
 		"Amount of aggTx: %v --> %x\n"+
+		"Amount of IoTTx: %v --> %x\n"+
 		"Total Transactions in this block: %v\n"+
 		"Height: %d\n"+
 		"Commitment Proof: %x\n"+
@@ -328,7 +338,9 @@ func (block Block) String() string {
 		block.NrConfigTx, block.ConfigTxData,
 		block.NrStakeTx, block.StakeTxData,
 		block.NrAggTx, block.AggTxData,
-		uint16(block.NrFundsTx) + uint16(block.NrAccTx) + uint16(block.NrConfigTx) + uint16(block.NrStakeTx) + uint16(block.NrAggTx),
+		block.NrIoTTx, block.IoTTxData,
+
+		uint16(block.NrFundsTx) + uint16(block.NrAccTx) + uint16(block.NrConfigTx) + uint16(block.NrStakeTx) + uint16(block.NrAggTx )+ uint16(block.NrIoTTx),
 		block.Height,
 		block.CommitmentProof[0:8],
 		block.SlashedAddress[0:8],

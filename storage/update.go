@@ -20,7 +20,7 @@ func UpdateBlocksToBlocksWithoutTx(block *protocol.Block) (err error){
 func BlockReadyToAggregate(block *protocol.Block) bool {
 
 	// If Block contains no transactions, it can be viewed as aggregated and moved to the according bucket.
-	if (block.NrAggTx == 0) && (block.NrStakeTx == 0) && (block.NrFundsTx == 0) && (block.NrAccTx == 0) && (block.NrConfigTx == 0) {
+	if (block.NrAggTx == 0) && (block.NrStakeTx == 0) && (block.NrFundsTx == 0) && (block.NrAccTx == 0) && (block.NrConfigTx == 0)  && (block.NrIoTTx == 0){
 		return true
 	}
 
