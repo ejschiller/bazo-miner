@@ -129,6 +129,12 @@ func collectTxFeesRollback(accTx []*protocol.AccTx, fundsTx []*protocol.FundsTx,
 		senderAcc, _ := storage.GetAccount(tx.Account)
 		senderAcc.Balance += tx.Fee
 	}
+	for _, tx := range stakeTx {
+		minerAcc.Balance -= tx.Fee
+
+		senderAcc, _ := storage.GetAccount(tx.Account)
+		senderAcc.Balance += tx.Fee
+	}
 }
 
 func collectBlockRewardRollback(reward uint64, minerHash [32]byte) {

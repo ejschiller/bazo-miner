@@ -2,11 +2,8 @@ package p2p
 
 import (
 	"encoding/binary"
-	"fmt"
-	"github.com/bazo-blockchain/bazo-miner/crypto"
 	"github.com/bazo-blockchain/bazo-miner/protocol"
 	"github.com/bazo-blockchain/bazo-miner/storage"
-	"golang.org/x/crypto/ed25519"
 	"strconv"
 	"sync"
 )
@@ -94,12 +91,6 @@ func processIotTxBrdcst(p *peer, payload []byte, brdcstType uint8) {
 			return
 		}
 		tx = sTx
-		//TODO delete this part
-		from := crypto.GetPubKeyFromAddressED(sTx.From)
-		sig := sTx.Sig
-		data := sTx.Data
-		valid :=ed25519.Verify(from,data,sig[:])
-		fmt.Println(valid)
 	}
 
 	//Response tx acknowledgment if the peer is a client

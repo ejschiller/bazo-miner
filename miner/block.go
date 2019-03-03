@@ -196,10 +196,50 @@ func addAccTx(b *protocol.Block, tx *protocol.AccTx) error {
 }
 
 func addIoTTx(b *protocol.Block, tx *protocol.IotTx) error {
-	_,exists := storage.State[tx.From]
-	if !exists {
-		//add IoT Key
+	if _, exists := b.StateCopy[tx.From]; !exists {
+		if acc := storage.State[tx.From]; acc != nil {
+			hash := protocol.SerializeHashContent(acc.Address)
+			if hash == tx.From {
+				newAcc := protocol.Account{}
+				newAcc = *acc
+				b.StateCopy[tx.From] = &newAcc
+			}
+		} else {
+			return errors.New(fmt.Sprintf("Sender account not present in the state: %x\n", tx.From))
+		}
 	}
+
+	//Vice versa for receiver account.
+	if _, exists := b.StateCopy[tx.To]; !exists {
+		if acc := storage.State[tx.To]; acc != nil {
+			hash := protocol.SerializeHashContent(acc.Address)
+			if hash == tx.To {
+				newAcc := protocol.Account{}
+				newAcc = *acc
+				b.StateCopy[tx.To] = &newAcc
+			}
+		} else {
+			return errors.New(fmt.Sprintf("Receiver account not present in the state: %x\n", tx.To))
+		}
+	}
+
+	if !storage.IsRootKey(tx.From) {
+		if (tx.Fee) > b.StateCopy[tx.From].Balance {
+			return errors.New("Not enough funds to complete the IoT transaction!")
+		}
+	}
+	if b.StateCopy[tx.From].TxCnt != tx.TxCnt {
+		err := fmt.Sprintf("Sender txCnt IoT does not match: %v (tx.txCnt) vs. %v (state txCnt)", tx.TxCnt, b.StateCopy[tx.From].TxCnt)
+		//TODO @ilecipi
+		fmt.Println(err)
+		//return errors.New(err)
+	}
+	accSender := b.StateCopy[tx.From]
+	accSender.TxCnt += 1
+	//TODO @ilecipi fix Fee
+	accSender.Balance -= tx.Fee
+	fmt.Println(accSender.Balance)
+
 	b.IoTTxData = append(b.IoTTxData, tx.Hash())
 	logger.Printf("Added tx (%x) to the IoTTxData slice: %v", tx.Hash(), *tx)
 	return nil

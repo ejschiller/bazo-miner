@@ -17,11 +17,14 @@ type IotTx struct {
 	To     [32]byte
 	Sig    [64]byte
 	Data   []byte
+	Fee    		uint64
+
 }
 
-func ConstrIotTx(header byte, txCnt uint32, from, to [32]byte, sigKey ed25519.PrivateKey, data []byte) (tx *IotTx, err error) {
+func ConstrIotTx(header byte, fee uint64, txCnt uint32, from, to [32]byte, sigKey ed25519.PrivateKey, data []byte) (tx *IotTx, err error) {
 	tx = new(IotTx)
 	tx.Header = header
+	tx.Fee = tx.TxFee()
 	tx.From = from
 	tx.To = to
 	tx.TxCnt = txCnt
@@ -49,12 +52,14 @@ func (tx *IotTx) Hash() (hash [32]byte) {
 		From   [32]byte
 		To     [32]byte
 		Data   []byte
+		Fee		uint64
 	}{
 		tx.Header,
 		tx.TxCnt,
 		tx.From,
 		tx.To,
 		tx.Data,
+		tx.Fee,
 	}
 
 	return SerializeHashContent(txHash)
@@ -74,6 +79,7 @@ func (tx *IotTx) Encode() (encodedTx []byte) {
 		tx.To,
 		tx.Sig,
 		tx.Data,
+		tx.Fee,
 	}
 	buffer := new(bytes.Buffer)
 	gob.NewEncoder(buffer).Encode(encodeData)
@@ -97,13 +103,16 @@ func (tx IotTx) String() string {
 			"From: %x\n"+
 			"To: %x\n"+
 			"Sig: %x\n"+
-			"Data: %v\n",
+			"Data: %v\n"+
+		"Fee: %v\n",
+
 		tx.Header,
 		tx.TxCnt,
 		tx.From[0:8],
 		tx.To[0:8],
 		tx.Sig[0:8],
 		tx.Data,
+		tx.Fee,
 	)
 }
 

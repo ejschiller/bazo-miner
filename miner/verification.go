@@ -48,24 +48,20 @@ func verifyIotTx(tx *protocol.IotTx) bool {
 	accFrom := storage.State[tx.From]
 	accTo := storage.State[tx.To]
 	//Accounts non existent
-	if accTo == nil {
+	if accTo == nil || accFrom == nil {
 		logger.Printf("Account non existent. From: %v\nTo: %v\n", accFrom, accTo)
 		return false
 	}
-	if accFrom == nil {
-
-	}
-	accFromHash := protocol.SerializeHashContent(tx.From)
+	accFromHash := protocol.SerializeHashContent(accFrom.Address)
 	accToHash := protocol.SerializeHashContent(accTo.Address)
 
 	txData := tx.Data
-
-	pubKey := crypto.GetPubKeyFromAddressED(tx.From)
+	pubKey := accFrom.Address[:]
 	if ed25519.Verify(pubKey, txData, tx.Sig[:]) && tx.From != tx.To {
 		return true
 	} else {
 		logger.Printf("Sig invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8])
-		FileConnectionsLog.WriteString(fmt.Sprintf("Sig invalid. FromHash: %x\nToHash: %x\n", tx.From[0:8], tx.To[0:8]))
+		FileConnectionsLog.WriteString(fmt.Sprintf("Sig invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8]))
 		return false
 	}
 }
