@@ -260,7 +260,7 @@ func iotStateChange(txSlice []*protocol.IotTx) error {
 			acc, _ := storage.GetAccount(newAccHash)
 			if acc != nil {
 				//Shouldn't happen, because this should have been prevented when adding an accTx to the block
-				return errors.New("Address already exists in the state.")
+				return errors.New("IoT Address already exists in the state.")
 			}
 
 			//If acc does not exist, write to state
