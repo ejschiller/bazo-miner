@@ -69,7 +69,9 @@ func (tx *IotTx) Hash() (hash [32]byte) {
 //behavior. Therefore, writing own encoder/decoder
 func (tx *IotTx) Encode() (encodedTx []byte) {
 
-	//gob.Register(&ethdb.MemDatabase{})
+	if tx == nil {
+		return nil
+	}
 
 	// Encode
 	encodeData := IotTx{
@@ -120,7 +122,7 @@ func (tx *IotTx) Size() uint64  {
 	size := int(unsafe.Sizeof(*tx))
 	size += len(tx.Data)
 	return uint64(size)}
-func (tx *IotTx) TxFee() uint64 { return 1 }
+func (tx *IotTx) TxFee() uint64 { return tx.Fee }
 
 func (tx *IotTx) Sender() [32]byte { return [32]byte{} } //Return empty because never needed.
 func (tx *IotTx) Receiver() [32]byte { return [32]byte{}}

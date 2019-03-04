@@ -44,6 +44,8 @@ func txRes(p *peer, payload []byte, txKind uint8) {
 		packet = BuildPacket(STAKETX_RES, tx.Encode())
 	case AGGTX_REQ:
 		packet = BuildPacket(AGGTX_RES, tx.Encode())
+	case IOTTX_REQ:
+		packet = BuildPacket(IOTTX_RES, tx.Encode())
 	}
 
 	sendData(p, packet)

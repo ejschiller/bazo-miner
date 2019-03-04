@@ -251,27 +251,59 @@ func accStateChange(txSlice []*protocol.AccTx) error {
 	return nil
 }
 
-func iotStateChange(txSlice []*protocol.IotTx) error {
+func iotStateChange(txSlice []*protocol.IotTx) (err error) {
 	for _, tx := range txSlice {
-		_, exists := storage.State[protocol.SerializeHashContent(tx.From)]
-		if !exists{
-			newAcc := protocol.NewAccount(tx.From, tx.From, 0, false, [crypto.COMM_KEY_LENGTH_ED]byte{}, nil, nil)
-			newAccHash := newAcc.Hash()
-			acc, _ := storage.GetAccount(newAccHash)
-			if acc != nil {
-				//Shouldn't happen, because this should have been prevented when adding an accTx to the block
-				return errors.New("IoT Address already exists in the state.")
-			}
-
-			//If acc does not exist, write to state
-			storage.State[newAccHash] = &newAcc
-			accHash := protocol.SerializeHashContent(tx.From)
-			_, err := storage.GetAccount(accHash)
-			if err != nil {
-				return err
-			}
-
+		var rootAcc *protocol.Account
+		//Check if we have to issue new coins (in case a root account signed the tx)
+		if rootAcc, err = storage.GetRootAccount(tx.From); err != nil {
+			return err
 		}
+
+		if rootAcc != nil && rootAcc.Balance+tx.Fee > MAX_MONEY {
+			return errors.New("Transaction amount would lead to balance overflow at the receiver (root) account.")
+		}
+
+		//Will not be reached if errors occured
+		if rootAcc != nil {
+			//rootAcc.Balance += tx.Amount
+			rootAcc.Balance += tx.Fee
+		}
+		var accSender, accReceiver *protocol.Account
+		accSender, err = storage.GetAccount(tx.From)
+		accReceiver, err = storage.GetAccount(tx.To)
+
+		//Check transaction counter
+		if tx.TxCnt != accSender.TxCnt {
+			err = errors.New(fmt.Sprintf("Sender txCnt does not match: %v (tx.txCnt) vs. %v (state txCnt).", tx.TxCnt, accSender.TxCnt))
+		}
+
+		//Check sender balance
+		if (tx.Fee) > accSender.Balance {
+			err = errors.New(fmt.Sprintf("Sender does not have enough funds for the transaction: Balance = %v, Fee = %v.", accSender.Balance, tx.Fee))
+		}
+
+		//After Tx fees, account must still have more than the minimum staking amount
+		if accSender.IsStaking && ((tx.Fee + protocol.MIN_STAKING_MINIMUM) > accSender.Balance) {
+			err = errors.New("Sender is staking and does not have enough funds in order to fulfill the required staking minimum.")
+		}
+
+		//Overflow protection
+		if accReceiver.Balance > MAX_MONEY {
+			err = errors.New("Transaction amount would lead to balance overflow at the receiver account.")
+		}
+
+		if err != nil {
+			if rootAcc != nil {
+				//Rollback root's credits if error occurs
+				rootAcc.Balance -= tx.Fee
+			}
+
+			return err
+		}
+
+		//We're manipulating pointer, no need to write back
+		accSender.TxCnt += 1;
+
 	}
 
 	return nil
@@ -418,11 +450,12 @@ func stakeStateChange(txSlice []*protocol.StakeTx, height uint32) (err error) {
 	return nil
 }
 
-func collectTxFees(accTxSlice []*protocol.AccTx, fundsTxSlice []*protocol.FundsTx, configTxSlice []*protocol.ConfigTx, stakeTxSlice []*protocol.StakeTx, aggTxSlice []*protocol.AggTx, minerHash [32]byte) (err error) {
+func collectTxFees(accTxSlice []*protocol.AccTx, fundsTxSlice []*protocol.FundsTx, configTxSlice []*protocol.ConfigTx, stakeTxSlice []*protocol.StakeTx, aggTxSlice []*protocol.AggTx, iotTxSlice []*protocol.IotTx, minerHash [32]byte) (err error) {
 	var tmpAccTx []*protocol.AccTx
 	var tmpFundsTx []*protocol.FundsTx
 	var tmpConfigTx []*protocol.ConfigTx
 	var tmpStakeTx []*protocol.StakeTx
+	var tmpIoTTx []*protocol.IotTx
 
 	minerAcc, err := storage.GetAccount(minerHash)
 	if err != nil {
@@ -517,6 +550,19 @@ func collectTxFees(accTxSlice []*protocol.AccTx, fundsTxSlice []*protocol.FundsT
 		senderAcc.Balance -= tx.Fee
 		minerAcc.Balance += tx.Fee
 		tmpStakeTx = append(tmpStakeTx, tx)
+	}
+
+	for _, tx := range iotTxSlice {
+		if minerAcc.Balance+tx.Fee > MAX_MONEY {
+			err = errors.New("Fee amount would lead to balance overflow at the miner account.")
+		}
+
+		senderAcc, err = storage.GetAccount(tx.From)
+
+
+		minerAcc.Balance += tx.Fee
+		senderAcc.Balance -= tx.Fee
+		tmpIoTTx = append(tmpIoTTx, tx)
 	}
 
 	return nil

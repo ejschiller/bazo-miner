@@ -230,15 +230,12 @@ func addIoTTx(b *protocol.Block, tx *protocol.IotTx) error {
 	}
 	if b.StateCopy[tx.From].TxCnt != tx.TxCnt {
 		err := fmt.Sprintf("Sender txCnt IoT does not match: %v (tx.txCnt) vs. %v (state txCnt)", tx.TxCnt, b.StateCopy[tx.From].TxCnt)
-		//TODO @ilecipi
-		fmt.Println(err)
-		//return errors.New(err)
+		return errors.New(err)
 	}
 	accSender := b.StateCopy[tx.From]
 	accSender.TxCnt += 1
 	//TODO @ilecipi fix Fee
 	accSender.Balance -= tx.Fee
-	fmt.Println(accSender.Balance)
 
 	b.IoTTxData = append(b.IoTTxData, tx.Hash())
 	logger.Printf("Added tx (%x) to the IoTTxData slice: %v", tx.Hash(), *tx)
@@ -479,7 +476,7 @@ func AggregateFundsTransactions(SortedAndSelectedFundsTx []*protocol.FundsTx, bl
 	return nil
 }
 
-//TODO @ilecipi aggreagate IoT transactions
+//TODO @ilecipi aggreagate IoT transactions?
 
 
 // The next few functions below are used for sorting the List of transactions which can be aggregated.
@@ -609,7 +606,7 @@ func fetchIotTxData(block *protocol.Block, iotTxSlice []*protocol.IotTx, initial
 		if tx != nil {
 			IoTTx = tx.(*protocol.IotTx)
 		} else {
-			err := p2p.TxReq(txHash, p2p.ACCTX_REQ)
+			err := p2p.TxReq(txHash, p2p.IOTTX_REQ)
 			if err != nil {
 				errChan <- errors.New(fmt.Sprintf("AccTx could not be read: %v", err))
 				return
@@ -1251,7 +1248,7 @@ func validateState(data blockData) error {
 		return err
 	}
 
-	if err := collectTxFees(data.accTxSlice, data.fundsTxSlice, data.configTxSlice, data.stakeTxSlice, data.aggTxSlice, data.block.Beneficiary); err != nil {
+	if err := collectTxFees(data.accTxSlice, data.fundsTxSlice, data.configTxSlice, data.stakeTxSlice, data.aggTxSlice, data.iotTxSlice, data.block.Beneficiary); err != nil {
 		stakeStateChangeRollback(data.stakeTxSlice)
 		fundsStateChangeRollback(data.fundsTxSlice)
 		aggregatedSenderStateRollback(data.aggTxSlice)
