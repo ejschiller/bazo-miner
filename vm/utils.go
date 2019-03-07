@@ -105,18 +105,4 @@ func SignedByteArrayConversion(bi big.Int) []byte {
 	return result
 }
 
-func BigIntToPushableBytes(element big.Int) []byte {
-	baseLength := byte(len(element.Bytes()))
 
-	var baseVal []byte
-	baseVal = append(baseVal, baseLength)
-
-	if element.IsUint64() == true {
-		baseVal = append(baseVal, 0) // signing byte
-	} else {
-		baseVal = append(baseVal, 1) // signing byte
-	}
-
-	baseVal = append(baseVal, element.Bytes()...) // value
-	return baseVal
-}
