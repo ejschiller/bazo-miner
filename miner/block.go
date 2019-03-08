@@ -229,8 +229,9 @@ func addIoTTx(b *protocol.Block, tx *protocol.IotTx) error {
 		}
 	}
 	if b.StateCopy[tx.From].TxCnt != tx.TxCnt {
-		err := fmt.Sprintf("Sender txCnt IoT does not match: %v (tx.txCnt) vs. %v (state txCnt)", tx.TxCnt, b.StateCopy[tx.From].TxCnt)
-		return errors.New(err)
+		//TODO @ilecipi revert check TxCnt
+		//err := fmt.Sprintf("Sender txCnt IoT does not match: %v (tx.txCnt) vs. %v (state txCnt)", tx.TxCnt, b.StateCopy[tx.From].TxCnt)
+		//return errors.New(err)
 	}
 	accSender := b.StateCopy[tx.From]
 	accSender.TxCnt += 1
@@ -283,8 +284,10 @@ func addFundsTx(b *protocol.Block, tx *protocol.FundsTx) error {
 
 	//Transaction count need to match the state, preventing replay attacks.
 	if b.StateCopy[tx.From].TxCnt != tx.TxCnt {
-		err := fmt.Sprintf("Sender txCnt does not match: %v (tx.txCnt) vs. %v (state txCnt)", tx.TxCnt, b.StateCopy[tx.From].TxCnt)
-		return errors.New(err)
+		//TODO @ilecipi revert check TxCnt
+		//err := fmt.Sprintf("Sender txCnt does not match: %v (tx.txCnt) vs. %v (state txCnt)", tx.TxCnt, b.StateCopy[tx.From].TxCnt)
+
+		//return errors.New(err)
 	}
 
 	//Prevent balance overflow in receiver account.

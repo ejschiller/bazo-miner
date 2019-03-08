@@ -273,9 +273,10 @@ func iotStateChange(txSlice []*protocol.IotTx) (err error) {
 		accReceiver, err = storage.GetAccount(tx.To)
 
 		//Check transaction counter
-		if tx.TxCnt != accSender.TxCnt {
-			err = errors.New(fmt.Sprintf("Sender txCnt does not match: %v (tx.txCnt) vs. %v (state txCnt).", tx.TxCnt, accSender.TxCnt))
-		}
+		//TODO: @ilecipi check again
+		//if tx.TxCnt != accSender.TxCnt {
+		//	err = errors.New(fmt.Sprintf("Sender txCnt does not match: %v (tx.txCnt) vs. %v (state txCnt).", tx.TxCnt, accSender.TxCnt))
+		//}
 
 		//Check sender balance
 		if (tx.Fee) > accSender.Balance {
@@ -359,9 +360,11 @@ func fundsStateChange(txSlice []*protocol.FundsTx) (err error) {
 		accReceiver, err = storage.GetAccount(tx.To)
 
 		//Check transaction counter
-		if tx.TxCnt != accSender.TxCnt {
-			err = errors.New(fmt.Sprintf("Sender txCnt does not match: %v (tx.txCnt) vs. %v (state txCnt).", tx.TxCnt, accSender.TxCnt))
-		}
+		//TODO @ilecipi revert check TxCnt
+
+		//if tx.TxCnt != accSender.TxCnt {
+		//	err = errors.New(fmt.Sprintf("Sender txCnt does not match: %v (tx.txCnt) vs. %v (state txCnt).", tx.TxCnt, accSender.TxCnt))
+		//}
 
 		//Check sender balance
 		if (tx.Amount + tx.Fee) > accSender.Balance {
