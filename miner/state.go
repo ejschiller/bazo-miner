@@ -82,9 +82,18 @@ func CheckAndChangeParameters(parameters *Parameters, configTxSlice *[]*protocol
 
 //For logging purposes
 func getState() (state string) {
+	accountWithBalance :=0
+	state += fmt.Sprintf("Number Accounts: %v\n", len(storage.State))
 	for _, acc := range storage.State {
-		state += fmt.Sprintf("Is root: %v, %v\n", storage.IsRootKey(acc.Hash()), acc)
+		//state += fmt.Sprintf("Is root: %v, %v\n", storage.IsRootKey(acc.Hash()), acc)
+		if(acc.Balance>0){
+			accountWithBalance++;
+		}
 	}
+	//state += fmt.Sprintf("Number Accounts: %v\n", len(storage.State))
+
+	state += fmt.Sprintf(" -> With Balance: %v\n", accountWithBalance)
+
 	return state
 }
 

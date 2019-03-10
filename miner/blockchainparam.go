@@ -5,6 +5,7 @@ import (
 	"github.com/bazo-blockchain/bazo-miner/protocol"
 	"github.com/bazo-blockchain/bazo-miner/storage"
 	"math"
+	"time"
 )
 
 var (
@@ -63,6 +64,9 @@ type timerange struct {
 var targetTimes []timerange
 
 func collectStatistics(b *protocol.Block) {
+	end :=time.Now();
+	duration := end.Sub(StartTime)
+	logger.Printf("BlockDuration %v;NumberIoTTransactions %v;BlockSize %v", duration.Seconds(),b.NrIoTTx, b.GetSize())
 	globalBlockCount++
 	localBlockCount++
 

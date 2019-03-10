@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
 )
 
 var (
@@ -72,7 +73,7 @@ func Init(validatorWallet, multisigWallet ed25519.PublicKey , rootWallet, valida
 	go incomingData()
 	mining(initialBlock)
 }
-
+var StartTime = time.Now()
 //Mining is a constant process, trying to come up with a successful PoW.
 func mining(initialBlock *protocol.Block) {
 	currentBlock := newBlock(initialBlock.Hash, initialBlock.HashWithoutTx, [crypto.COMM_PROOF_LENGTH_ED]byte{}, initialBlock.Height+1)
@@ -106,6 +107,7 @@ func mining(initialBlock *protocol.Block) {
 		blockValidation.Lock()
 		nextBlock := newBlock(lastBlock.Hash, lastBlock.HashWithoutTx, [crypto.COMM_PROOF_LENGTH_ED]byte{}, lastBlock.Height+1)
 		currentBlock = nextBlock
+		StartTime = time.Now()
 		prepareBlock(currentBlock)
 		blockValidation.Unlock()
 	}

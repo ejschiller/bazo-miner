@@ -57,6 +57,7 @@ type Block struct {
 	StakeTxData  		 [][32]byte
 	AggTxData  	 		 [][32]byte
 	IoTTxData  	 		 [][32]byte
+	SizeIoTData			 uint64
 
 }
 
@@ -154,6 +155,7 @@ func (block *Block) InitBloomFilter(txPubKeys [][32]byte) {
 func (block *Block) GetSize() uint64 {
 	//TODO Update MIN_BLOCKSIZE
 	size := MIN_BLOCKSIZE + int(block.GetTxDataSize())
+
 
 	if block.BloomFilter != nil {
 		encodedBF, _ := block.BloomFilter.GobEncode()
@@ -261,6 +263,7 @@ func (block *Block) Encode() []byte {
 		StakeTxData:  		   			block.StakeTxData,
 		AggTxData:	   					block.AggTxData,
 		IoTTxData:	   					block.IoTTxData,
+		SizeIoTData:					block.SizeIoTData,
 
 	}
 

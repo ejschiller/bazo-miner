@@ -119,8 +119,7 @@ func (tx IotTx) String() string {
 }
 
 func (tx *IotTx) Size() uint64  {
-	size := int(unsafe.Sizeof(*tx))
-	size += len(tx.Data)
+	size := int(unsafe.Sizeof(*tx)) + len(tx.Data)
 	return uint64(size)}
 func (tx *IotTx) TxFee() uint64 { return tx.Fee }
 

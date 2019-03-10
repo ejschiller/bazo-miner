@@ -49,7 +49,7 @@ func verifyIotTx(tx *protocol.IotTx) bool {
 	accTo := storage.State[tx.To]
 	//Accounts non existent
 	if accTo == nil || accFrom == nil {
-		logger.Printf("Account non existent. From: %v\nTo: %v\n", accFrom, accTo)
+		//logger.Printf("Account non existent. From: %v\nTo: %v\n", accFrom, accTo)
 		return false
 	}
 	accFromHash := protocol.SerializeHashContent(accFrom.Address)

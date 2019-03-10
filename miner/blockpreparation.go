@@ -30,9 +30,12 @@ func prepareBlock(block *protocol.Block) {
 	//map where all senders from FundsTx and AggTx are added to. --> this ensures that tx with same sender are only counted once.
 	storage.DifferentSenders = map[[32]byte]uint32{}
 	storage.DifferentReceivers = map[[32]byte]uint32{}
-	for _, tx := range opentxs {
+	for i, tx := range opentxs {
 		//Switch because with an if statement every transaction would need a getter-method for its type.
 		//Therefore, switch is more code-efficient.
+		if int(block.GetSize()+10)+(i*int(len(tx.Hash()))) > int(activeParameters.Block_size){
+			break
+		}
 		switch tx.(type) {
 		case *protocol.FundsTx, *protocol.AggTx:
 			storage.DifferentSenders[tx.Sender()] = storage.DifferentSenders[tx.Sender()]+1

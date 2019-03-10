@@ -15,9 +15,9 @@ const (
 	//Default Block params
 	BLOCKHASH_SIZE       	= 32      //Byte
 	FEE_MINIMUM          	= 1       //Coins
-	BLOCK_SIZE           	= 5000000 //Byte
-	DIFF_INTERVAL        	= 50      //Blocks
-	BLOCK_INTERVAL       	= 60      //Sec
+	BLOCK_SIZE           	= 20000 //Byte
+	DIFF_INTERVAL        	= 15      //Blocks
+	BLOCK_INTERVAL       	= 15      //Sec
 	BLOCK_REWARD         	= 0       //Coins
 	STAKING_MINIMUM      	= 1000    //Coins
 	WAITING_MINIMUM      	= 0       //Blocks

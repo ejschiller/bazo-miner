@@ -229,9 +229,9 @@ func ReadClosedTx(hash [32]byte) (transaction protocol.Transaction) {
 
 func ReadMempool(){
 	logger.Printf("MemPool_________")
-	for tx := range txMemPool {
-		logger.Printf("%x", tx)
-	}
+	//for tx := range txMemPool {
+		//logger.Printf("%x", tx)
+	//}
 	logger.Printf("________________")
 	logger.Printf("Mempool_Size: %v", len(txMemPool))
 	logger.Printf("________________")

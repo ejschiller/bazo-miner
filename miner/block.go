@@ -2,6 +2,7 @@ package miner
 
 import (
 	"encoding/binary"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"sort"
@@ -135,7 +136,7 @@ func addTx(b *protocol.Block, tx protocol.Transaction) error {
 	//So the trade-off is effectively clean abstraction vs. tx size. Everything related to fundsTx is postponed because
 	//the txs depend on each other.
 	if !verify(tx) {
-		logger.Printf("Transaction could not be verified: %v", tx)
+		//logger.Printf("Transaction could not be verified: %v", tx)
 		return errors.New("Transaction could not be verified.")
 	}
 
@@ -169,7 +170,7 @@ func addTx(b *protocol.Block, tx protocol.Transaction) error {
 	case *protocol.IotTx:
 		err := addIoTTx(b, tx.(*protocol.IotTx))
 		if err != nil {
-			logger.Printf("Adding iotTx (%x) failed (%v): %v\n",tx.Hash(), err, tx.(*protocol.IotTx))
+			//logger.Printf("Adding iotTx (%x) failed (%v): %v\n",tx.Hash(), err, tx.(*protocol.IotTx))
 			return err
 		}
 	default:
@@ -191,7 +192,7 @@ func addAccTx(b *protocol.Block, tx *protocol.AccTx) error {
 
 	//Add the tx hash to the block header and write it to open storage (non-validated transactions).
 	b.AccTxData = append(b.AccTxData, tx.Hash())
-	logger.Printf("Added tx (%x) to the AccTxData slice: %v", tx.Hash(), *tx)
+	//logger.Printf("Added tx (%x) to the AccTxData slice: %v", tx.Hash(), *tx)
 	return nil
 }
 
@@ -225,7 +226,9 @@ func addIoTTx(b *protocol.Block, tx *protocol.IotTx) error {
 
 	if !storage.IsRootKey(tx.From) {
 		if (tx.Fee) > b.StateCopy[tx.From].Balance {
-			return errors.New("Not enough funds to complete the IoT transaction!")
+			acc:= b.StateCopy[tx.From]
+			fmt.Println("NO FUNDS --> ",hex.EncodeToString(acc.Address[:]))
+			//return errors.New("Not enough funds to complete the IoT transaction!")
 		}
 	}
 	if b.StateCopy[tx.From].TxCnt != tx.TxCnt {
@@ -237,9 +240,9 @@ func addIoTTx(b *protocol.Block, tx *protocol.IotTx) error {
 	accSender.TxCnt += 1
 	//TODO @ilecipi fix Fee
 	accSender.Balance -= tx.Fee
-
+	//b.SizeIoTData += tx.Size()
 	b.IoTTxData = append(b.IoTTxData, tx.Hash())
-	logger.Printf("Added tx (%x) to the IoTTxData slice: %v", tx.Hash(), *tx)
+	//logger.Printf("Added tx (%x) to the IoTTxData slice: %v", tx.Hash(), *tx)
 	return nil
 	}
 
