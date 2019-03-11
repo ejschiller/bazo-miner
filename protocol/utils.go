@@ -15,6 +15,9 @@ import (
 func SerializeHashContent(data interface{}) (hash [32]byte) {
 	return sha3.Sum256([]byte(fmt.Sprintf("%v", data)))
 }
+func SerializeHashContentIoT(data [32]byte) (hash [32]byte) {
+	return sha3.Sum256(data[:])
+}
 
 func Encode(data [][]byte, sliceSize int) []byte {
 	encodedData := make([]byte, len(data)*sliceSize)

@@ -52,11 +52,11 @@ func (tx *IotTx) Hash() (hash [32]byte) {
 	//TODO: @ilecipi add tx.From as well!
 	buf := new(bytes.Buffer)
 	binary.Write(buf, binary.BigEndian, tx.To);
+	binary.Write(buf, binary.BigEndian, tx.From);
 	binary.Write(buf, binary.BigEndian, tx.TxCnt);
 	binary.Write(buf, binary.BigEndian, tx.TxFee());
 	binary.Write(buf, binary.BigEndian, tx.Header);
 	binary.Write(buf, binary.BigEndian, tx.Data);
-	fmt.Println(buf.Bytes())
 
 	return sha3.Sum256(buf.Bytes())
 }

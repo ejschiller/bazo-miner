@@ -52,12 +52,15 @@ func verifyIotTx(tx *protocol.IotTx) bool {
 		//logger.Printf("Account non existent. From: %v\nTo: %v\n", accFrom, accTo)
 		return false
 	}
-	accFromHash := protocol.SerializeHashContent(accFrom.Address)
-	accToHash := protocol.SerializeHashContent(accTo.Address)
-
-	txData := tx.Data
+	accFromHash := protocol.SerializeHashContentIoT(accFrom.Address)
+	accToHash := protocol.SerializeHashContentIoT(accTo.Address)
+	copy(tx.From[:], accFromHash[:]);
+	copy(tx.To[:], accToHash[:]);
+	txHash := tx.Hash()
 	pubKey := accFrom.Address[:]
-	if ed25519.Verify(pubKey, txData, tx.Sig[:]) && tx.From != tx.To {
+	if ed25519.Verify(pubKey, txHash[:], tx.Sig[:]) && tx.From != tx.To {
+		tx.From = protocol.SerializeHashContent(accFrom.Address);
+		tx.To = protocol.SerializeHashContent(accTo.Address);
 		return true
 	} else {
 		logger.Printf("Sig invalid. FromHash: %x\nToHash: %x\n", accFromHash[0:8], accToHash[0:8])

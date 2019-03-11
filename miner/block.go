@@ -197,7 +197,6 @@ func addAccTx(b *protocol.Block, tx *protocol.AccTx) error {
 }
 
 func addIoTTx(b *protocol.Block, tx *protocol.IotTx) error {
-	fmt.Println(tx.String())
 	if _, exists := b.StateCopy[tx.From]; !exists {
 		if acc := storage.State[tx.From]; acc != nil {
 			hash := protocol.SerializeHashContent(acc.Address)
