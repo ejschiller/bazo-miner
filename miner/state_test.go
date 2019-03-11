@@ -24,7 +24,7 @@ func TestFundsTxStateChange(t *testing.T) {
 	var testSize uint32
 	testSize = 1000
 
-	b := newBlock([32]byte{}, [crypto.COMM_PROOF_LENGTH_ED]byte{}, 1)
+	b := newBlock([32]byte{}, [crypto.COMM_KEY_LENGTH]byte{}, 1)
 	var funds []*protocol.FundsTx
 
 	var feeA, feeB uint64
@@ -280,7 +280,7 @@ func TestStakeTxStateChange(t *testing.T) {
 
 	accAHash := protocol.SerializeHashContent(accA.Address)
 
-	b := newBlock([32]byte{}, [crypto.COMM_PROOF_LENGTH_ED]byte{}, 1)
+	b := newBlock([32]byte{}, [crypto.COMM_KEY_LENGTH]byte{}, 1)
 	var stake, stake2 []*protocol.StakeTx
 
 	accA.IsStaking = false

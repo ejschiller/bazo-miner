@@ -1,6 +1,7 @@
 package protocol
 
 import (
+	"crypto/rsa"
 	"encoding/binary"
 	"fmt"
 	"github.com/bazo-blockchain/bazo-miner/crypto"
@@ -8,7 +9,7 @@ import (
 )
 
 const (
-	STAKETX_SIZE = 106 + crypto.COMM_KEY_LENGTH_ED
+	STAKETX_SIZE = 106 + crypto.COMM_KEY_LENGTH
 )
 
 //when we broadcast transactions we need a way to distinguish with a type
@@ -19,10 +20,10 @@ type StakeTx struct {
 	IsStaking     bool                  // 1 Byte
 	Account       [32]byte              // 32 Byte
 	Sig           [64]byte              // 64 Byte
-	CommitmentKey [crypto.COMM_KEY_LENGTH_ED]byte // the modulus N of the RSA public key
+	CommitmentKey [crypto.COMM_KEY_LENGTH]byte // the modulus N of the RSA public key
 }
 
-func ConstrStakeTx(header byte, fee uint64, isStaking bool, account [32]byte, signKey ed25519.PrivateKey, commPubKey ed25519.PublicKey) (tx *StakeTx, err error) {
+func ConstrStakeTx(header byte, fee uint64, isStaking bool, account [32]byte, signKey ed25519.PrivateKey, commPubKey *rsa.PublicKey) (tx *StakeTx, err error) {
 
 	tx = new(StakeTx)
 
@@ -31,18 +32,13 @@ func ConstrStakeTx(header byte, fee uint64, isStaking bool, account [32]byte, si
 	tx.IsStaking = isStaking
 	tx.Account = account
 
-	tx.CommitmentKey = crypto.GetAddressFromPubKeyED(commPubKey)
+	copy(tx.CommitmentKey[:], commPubKey.N.Bytes())
 
 	txHash := tx.Hash()
 
 	sign := ed25519.Sign(signKey, txHash[:])
 
 	copy(tx.Sig[:],sign[:])
-
-	if err != nil {
-		return nil, err
-	}
-
 
 	return tx, nil
 }
@@ -58,7 +54,7 @@ func (tx *StakeTx) Hash() (hash [32]byte) {
 		Fee        uint64
 		IsStaking  bool
 		Account    [32]byte
-		CommKey    [crypto.COMM_KEY_LENGTH_ED]byte
+		CommKey    [crypto.COMM_KEY_LENGTH]byte
 	}{
 		tx.Header,
 		tx.Fee,
@@ -95,7 +91,7 @@ func (tx *StakeTx) Encode() (encodedTx []byte) {
 	encodedTx[9] = isStaking
 	copy(encodedTx[10:42], tx.Account[:])
 	copy(encodedTx[42:106], tx.Sig[:])
-	copy(encodedTx[106:106+crypto.COMM_KEY_LENGTH_ED], tx.CommitmentKey[:])
+	copy(encodedTx[106:106+crypto.COMM_KEY_LENGTH], tx.CommitmentKey[:])
 
 	return encodedTx
 }
@@ -114,7 +110,7 @@ func (*StakeTx) Decode(encodedTx []byte) (tx *StakeTx) {
 	isStakingAsByte = encodedTx[9]
 	copy(tx.Account[:], encodedTx[10:42])
 	copy(tx.Sig[:], encodedTx[42:106])
-	copy(tx.CommitmentKey[:], encodedTx[106:106+crypto.COMM_KEY_LENGTH_ED])
+	copy(tx.CommitmentKey[:], encodedTx[106:106+crypto.COMM_KEY_LENGTH])
 
 	if isStakingAsByte == 0 {
 		tx.IsStaking = false

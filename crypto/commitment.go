@@ -2,27 +2,30 @@ package crypto
 
 import (
 	"bufio"
+	"crypto"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"golang.org/x/crypto/ed25519"
-	"io"
+	"math/big"
 	"os"
-	cryptorand "crypto/rand"
-
 )
 
 const (
 	// Note that this is the default public exponent set by Golang in rsa.go
 	// See https://github.com/golang/go/blob/6269dcdc24d74379d8a609ce886149811020b2cc/src/crypto/rsa/rsa.go#L226
-	COMM_PROOF_LENGTH_ED 	= 64
-	COMM_KEY_LENGTH_ED      = 32
-
+	COMM_PUBLIC_EXPONENT = 65537
+	COMM_KEY_BITS        = 2048
+	COMM_PROOF_LENGTH    = 256
+	COMM_KEY_LENGTH      = 256
+	COMM_NOF_PRIMES      = 2
 )
-func ExtractSeedKeyFromFile(filename string) (privKey ed25519.PrivateKey, err error) {
 
+func ExtractRSAKeyFromFile(filename string) (privKey *rsa.PrivateKey, err error) {
 	if _, err = os.Stat(filename); os.IsNotExist(err) {
-		err = CreateSeedKeyFile(filename)
+		err = CreateRSAKeyFile(filename)
 		if err != nil {
 			return privKey, err
 		}
@@ -36,43 +39,70 @@ func ExtractSeedKeyFromFile(filename string) (privKey ed25519.PrivateKey, err er
 
 	scanner := bufio.NewScanner(filehandle)
 
-	seed := nextLine(scanner)
+	strModulus := nextLine(scanner)
+	strPrivExponent := nextLine(scanner)
+	strPrimes := make([]string, COMM_NOF_PRIMES)
+	for i := 0; i < COMM_NOF_PRIMES; i++ {
+		strPrimes[i] = nextLine(scanner)
+	}
 
 	if scanErr := scanner.Err(); scanErr != nil || err != nil {
 		return privKey, errors.New(fmt.Sprintf("Could not read key from file: %v", err))
 	}
 
-	privKey = CreatePrivKeyFromBase64(seed)
+	privKey, err = CreateRSAPrivKeyFromBase64(strModulus, strPrivExponent, strPrimes)
+	if err != nil {
+		return privKey, err
+	}
 
-	return privKey, VerifySeedKey(privKey)
+	return privKey, VerifyRSAKey(privKey)
 }
 
-func VerifySeedKey(privKey ed25519.PrivateKey) error {
+func VerifyRSAKey(privKey *rsa.PrivateKey) error {
 	message := "Test"
-	cipher, err := SignMessageWithSeedKey(privKey, message)
+	cipher, err := SignMessageWithRSAKey(privKey, message)
 	if err != nil {
 		return errors.New(fmt.Sprintf("Could not sign message. Failed with error: %v", err))
 	}
-	pubKey := getPubKeyFromPrivKey(privKey)
-	valid := VerifyMessageWithSeedKey(pubKey, message, cipher)
-	if !valid {
-		return errors.New(fmt.Sprintf("Could not verify message. Failed with error"))
+
+	err = VerifyMessageWithRSAKey(&privKey.PublicKey, message, cipher)
+	if err != nil {
+		return errors.New(fmt.Sprintf("Could not verify message. Failed with error: %v", err))
 	}
 	return nil
 }
 
-func getPubKeyFromPrivKey(privKey ed25519.PrivateKey) (pubKey ed25519.PublicKey) {
-	publicKey := make([]byte, 32)
-	copy(publicKey, privKey[32:])
-	return publicKey
+func CreateRSAPubKeyFromBytes(bytModulus [COMM_KEY_LENGTH]byte) (pubKey *rsa.PublicKey, err error) {
+	modulus := new(big.Int).SetBytes(bytModulus[:])
+	pubKey = new(rsa.PublicKey)
+	pubKey.N = modulus
+	pubKey.E = COMM_PUBLIC_EXPONENT
+	return
 }
 
-func VerifyMessageWithSeedKey(pubKey ed25519.PublicKey, msg string, fixedSig [COMM_PROOF_LENGTH_ED]byte) (valid bool) {
-	return ed25519.Verify(pubKey,[]byte(msg), fixedSig[:])
+func CreateRSAPrivKeyFromBase64(strModulus string, strPrivExponent string, strPrimes []string) (privKey *rsa.PrivateKey, err error) {
+	modulus, err := fromBase64(strModulus, &err)
+	privExponent, err := fromBase64(strPrivExponent, &err)
+	primes := make([]*big.Int, COMM_NOF_PRIMES)
+	for i := 0; i < COMM_NOF_PRIMES; i++ {
+		primes[i], err = fromBase64(strPrimes[i], &err)
+	}
+
+	privKey = &rsa.PrivateKey{
+		PublicKey: rsa.PublicKey{
+			N: modulus,
+			E: COMM_PUBLIC_EXPONENT,
+		},
+		D:      privExponent,
+		Primes: primes,
+	}
+	privKey.Precompute()
+	return
 }
 
-func SignMessageWithSeedKey(privKey ed25519.PrivateKey, msg string) (fixedSig [COMM_PROOF_LENGTH_ED]byte, err error) {
-	sig := ed25519.Sign(privKey, []byte(msg))
+func SignMessageWithRSAKey(privKey *rsa.PrivateKey, msg string) (fixedSig [COMM_PROOF_LENGTH]byte, err error) {
+	hashed := sha256.Sum256([]byte(msg))
+	sig, err := rsa.SignPKCS1v15(rand.Reader, privKey, crypto.SHA256, hashed[:])
 	if err != nil {
 		return fixedSig, err
 	}
@@ -80,62 +110,57 @@ func SignMessageWithSeedKey(privKey ed25519.PrivateKey, msg string) (fixedSig [C
 	return fixedSig, nil
 }
 
-func CreatePrivKeyFromBase64(seed string) (privKey ed25519.PrivateKey) {
-	seedTmp := seedFromBase64(seed)
-	return ed25519.NewKeyFromSeed(seedTmp)
+func VerifyMessageWithRSAKey(pubKey *rsa.PublicKey, msg string, fixedSig [COMM_PROOF_LENGTH]byte) (err error) {
+	hashed := sha256.Sum256([]byte(msg))
+	return rsa.VerifyPKCS1v15(pubKey, crypto.SHA256, hashed[:], fixedSig[:])
 }
 
-func seedFromBase64(encoded string) ([]byte) {
-
+func fromBase64(encoded string, err *error) (*big.Int, error) {
+	if *err != nil {
+		return nil, *err
+	}
 
 	byteArray, encodeErr := base64.StdEncoding.DecodeString(encoded)
 	if encodeErr != nil {
-		return []byte{}
+		return nil, encodeErr
 	}
 
-	return byteArray
+	return new(big.Int).SetBytes(byteArray), nil
 }
-
-func CreateSeedKeyFile(filename string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-
-	seed, err := GenerateSeedKey()
-	if err != nil {
-		return err
-	}
-
-	_, err = file.WriteString(stringifySeedKey(seed))
-	return err
-}
-
-
-func GenerateSeedKey() ([]byte, error) {
-	seed := make([]byte, 32)
-	if _, err := io.ReadFull(cryptorand.Reader, seed); err != nil {
-		return nil, err
-	}
-	return seed,nil
-}
-
-func stringifySeedKey(seed []byte) string {
-	return base64.StdEncoding.EncodeToString(seed)
-}
-
-
 
 func nextLine(scanner *bufio.Scanner) string {
 	scanner.Scan()
 	return scanner.Text()
 }
 
-func SignMessageWithED(privKey ed25519.PrivateKey, msg string) (sig []byte){
-	sig = ed25519.Sign(privKey, []byte(msg))
-	return sig
+// Creates an RSA key file with the following lines
+// 1 	Public Modulus N
+// 2 	Private Exponent D
+// 3+	Private Primes (depending on COMM_NOF_PRIMES)
+func CreateRSAKeyFile(filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+
+	key, err := rsa.GenerateMultiPrimeKey(rand.Reader, COMM_NOF_PRIMES, COMM_KEY_BITS)
+	if err != nil {
+		return err
+	}
+
+	_, err = file.WriteString(stringifyRSAKey(key))
+	return err
 }
 
-func VerifyMessageWithED(pubKey [32]byte, msg string, sig []byte) (valid bool){
-	return ed25519.Verify(GetPubKeyFromAddressED(pubKey),[]byte(msg), sig)
+func stringifyRSAKey(key *rsa.PrivateKey) string {
+	keyString :=
+		base64.StdEncoding.EncodeToString(key.N.Bytes()) +
+			"\n" +
+			base64.StdEncoding.EncodeToString(key.D.Bytes())
+
+	for _, prime := range key.Primes {
+		keyString += "\n" + base64.StdEncoding.EncodeToString(prime.Bytes())
+	}
+
+	return keyString
 }

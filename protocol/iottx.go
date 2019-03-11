@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"golang.org/x/crypto/ed25519"
 	"unsafe"
+	"encoding/binary"
+	"golang.org/x/crypto/sha3"
+
 )
 
 //when we broadcast transactions we need a way to distinguish with a type
@@ -45,24 +48,17 @@ func (tx *IotTx) Hash() (hash [32]byte) {
 		//is returning nil better?
 		return [32]byte{}
 	}
+	//Order -> To	txCnt	txFee	Header	data
+	//TODO: @ilecipi add tx.From as well!
+	buf := new(bytes.Buffer)
+	binary.Write(buf, binary.BigEndian, tx.To);
+	binary.Write(buf, binary.BigEndian, tx.TxCnt);
+	binary.Write(buf, binary.BigEndian, tx.TxFee());
+	binary.Write(buf, binary.BigEndian, tx.Header);
+	binary.Write(buf, binary.BigEndian, tx.Data);
+	fmt.Println(buf.Bytes())
 
-	txHash := struct {
-		Header byte
-		TxCnt  uint32
-		From   [32]byte
-		To     [32]byte
-		Data   []byte
-		Fee		uint64
-	}{
-		tx.Header,
-		tx.TxCnt,
-		tx.From,
-		tx.To,
-		tx.Data,
-		tx.Fee,
-	}
-
-	return SerializeHashContent(txHash)
+	return sha3.Sum256(buf.Bytes())
 }
 
 //when we serialize the struct with binary.Write, unexported field get serialized as well, undesired

@@ -117,7 +117,7 @@ func verifyStakeTx(tx *protocol.StakeTx) bool {
 	acc := storage.State[tx.Account]
 	if acc == nil {
 		// TODO: Requires a Mutex?
-		newAcc := protocol.NewAccount(tx.Account, [32]byte{}, 0, false, [crypto.COMM_KEY_LENGTH_ED]byte{}, nil, nil)
+		newAcc := protocol.NewAccount(tx.Account, [32]byte{}, 0, false, [crypto.COMM_KEY_LENGTH]byte{}, nil, nil)
 		acc = &newAcc
 		storage.WriteAccount(acc)
 	}

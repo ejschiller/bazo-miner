@@ -12,17 +12,17 @@ func TestGetBlockSequences(t *testing.T) {
 
 	cleanAndPrepare()
 
-	b := newBlock([32]byte{}, [crypto.COMM_PROOF_LENGTH_ED]byte{}, 1)
+	b := newBlock([32]byte{}, [crypto.COMM_KEY_LENGTH]byte{}, 1)
 	createBlockWithTxs(b)
 	finalizeBlock(b)
 	validate(b, false)
 
-	b2 := newBlock(b.Hash, [crypto.COMM_PROOF_LENGTH_ED]byte{}, b.Height+1)
+	b2 := newBlock(b.Hash, [crypto.COMM_KEY_LENGTH]byte{}, b.Height+1)
 	createBlockWithTxs(b2)
 	finalizeBlock(b2)
 	validate(b2, false)
 
-	b3 := newBlock(b2.Hash, [crypto.COMM_PROOF_LENGTH_ED]byte{}, b2.Height+1)
+	b3 := newBlock(b2.Hash, [crypto.COMM_KEY_LENGTH]byte{}, b2.Height+1)
 	createBlockWithTxs(b3)
 	if err := finalizeBlock(b3); err != nil {
 		t.Error(err)
@@ -42,7 +42,7 @@ func TestGetBlockSequences(t *testing.T) {
 
 	//PoW needs lastBlock, have to set it manually
 	lastBlock = storage.ReadClosedBlock([32]byte{})
-	c := newBlock([32]byte{}, [crypto.COMM_PROOF_LENGTH_ED]byte{}, 1)
+	c := newBlock([32]byte{}, [crypto.COMM_KEY_LENGTH]byte{}, 1)
 	createBlockWithTxs(c)
 	if err := finalizeBlock(c); err != nil {
 		t.Error(err)
@@ -52,7 +52,7 @@ func TestGetBlockSequences(t *testing.T) {
 
 	//PoW needs lastBlock, have to set it manually
 	lastBlock = c
-	c2 := newBlock(c.Hash, [crypto.COMM_PROOF_LENGTH_ED]byte{}, c.Height+1)
+	c2 := newBlock(c.Hash, [crypto.COMM_KEY_LENGTH]byte{}, c.Height+1)
 	createBlockWithTxs(c2)
 	if err := finalizeBlock(c2); err != nil {
 		t.Error(err)
@@ -62,7 +62,7 @@ func TestGetBlockSequences(t *testing.T) {
 
 	//PoW needs lastBlock, have to set it manually
 	lastBlock = c2
-	c3 := newBlock(c2.Hash, [crypto.COMM_PROOF_LENGTH_ED]byte{}, c.Height+1)
+	c3 := newBlock(c2.Hash, [crypto.COMM_KEY_LENGTH]byte{}, c.Height+1)
 	createBlockWithTxs(c3)
 	finalizeBlock(c3)
 
@@ -87,17 +87,17 @@ func TestGetBlockSequences(t *testing.T) {
 
 	cleanAndPrepare()
 	//Make sure that another chain of equal length does not get activated
-	b = newBlock([32]byte{}, [crypto.COMM_PROOF_LENGTH_ED]byte{}, 1)
+	b = newBlock([32]byte{}, [crypto.COMM_KEY_LENGTH]byte{}, 1)
 	createBlockWithTxs(b)
 	finalizeBlock(b)
 	validate(b, false)
 
-	b2 = newBlock(b.Hash, [crypto.COMM_PROOF_LENGTH_ED]byte{}, b.Height+1)
+	b2 = newBlock(b.Hash, [crypto.COMM_KEY_LENGTH]byte{}, b.Height+1)
 	createBlockWithTxs(b2)
 	finalizeBlock(b2)
 	validate(b2, false)
 
-	b3 = newBlock(b2.Hash, [crypto.COMM_PROOF_LENGTH_ED]byte{}, b2.Height+1)
+	b3 = newBlock(b2.Hash, [crypto.COMM_KEY_LENGTH]byte{}, b2.Height+1)
 	createBlockWithTxs(b3)
 	finalizeBlock(b3)
 	validate(b3, false)
@@ -105,19 +105,19 @@ func TestGetBlockSequences(t *testing.T) {
 	//Blockchain now: genesis <- b <- b2 <- b3
 	//Competing chain: genesis <- c <- c2 <- c3
 	lastBlock = storage.ReadClosedBlock([32]byte{})
-	c = newBlock([32]byte{}, [crypto.COMM_PROOF_LENGTH_ED]byte{}, 1)
+	c = newBlock([32]byte{}, [crypto.COMM_KEY_LENGTH]byte{}, 1)
 	createBlockWithTxs(c)
 	finalizeBlock(c)
 	storage.WriteOpenBlock(c)
 
 	lastBlock = c
-	c2 = newBlock(c.Hash, [crypto.COMM_PROOF_LENGTH_ED]byte{}, c.Height+1)
+	c2 = newBlock(c.Hash, [crypto.COMM_KEY_LENGTH]byte{}, c.Height+1)
 	createBlockWithTxs(c2)
 	finalizeBlock(c2)
 	storage.WriteOpenBlock(c2)
 
 	lastBlock = c2
-	c3 = newBlock(c2.Hash, [crypto.COMM_PROOF_LENGTH_ED]byte{}, c2.Height+1)
+	c3 = newBlock(c2.Hash, [crypto.COMM_KEY_LENGTH]byte{}, c2.Height+1)
 	createBlockWithTxs(c3)
 	finalizeBlock(c3)
 
@@ -134,12 +134,12 @@ func TestGetBlockSequences(t *testing.T) {
 func TestGetNewChain(t *testing.T) {
 
 	cleanAndPrepare()
-	b := newBlock([32]byte{}, [crypto.COMM_PROOF_LENGTH_ED]byte{}, 1)
+	b := newBlock([32]byte{}, [crypto.COMM_KEY_LENGTH]byte{}, 1)
 	createBlockWithTxs(b)
 	finalizeBlock(b)
 	validate(b, false)
 
-	b2 := newBlock(b.Hash, [crypto.COMM_PROOF_LENGTH_ED]byte{}, b.Height+1)
+	b2 := newBlock(b.Hash, [crypto.COMM_KEY_LENGTH]byte{}, b.Height+1)
 	createBlockWithTxs(b2)
 	finalizeBlock(b2)
 
@@ -155,13 +155,13 @@ func TestGetNewChain(t *testing.T) {
 	//Blockchain now: genesis <- b
 	//New chain: genesis <- c <- c2
 	lastBlock = storage.ReadClosedBlock([32]byte{})
-	c := newBlock([32]byte{}, [crypto.COMM_PROOF_LENGTH_ED]byte{}, 1)
+	c := newBlock([32]byte{}, [crypto.COMM_KEY_LENGTH]byte{}, 1)
 	createBlockWithTxs(c)
 	finalizeBlock(c)
 	storage.WriteOpenBlock(c)
 
 	lastBlock = c
-	c2 := newBlock(c.Hash, [crypto.COMM_PROOF_LENGTH_ED]byte{}, c.Height+1)
+	c2 := newBlock(c.Hash, [crypto.COMM_KEY_LENGTH]byte{}, c.Height+1)
 	createBlockWithTxs(c2)
 	finalizeBlock(c2)
 

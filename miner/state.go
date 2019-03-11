@@ -85,7 +85,7 @@ func getState() (state string) {
 	accountWithBalance :=0
 	state += fmt.Sprintf("Number Accounts: %v\n", len(storage.State))
 	for _, acc := range storage.State {
-		//state += fmt.Sprintf("Is root: %v, %v\n", storage.IsRootKey(acc.Hash()), acc)
+		state += fmt.Sprintf("Is root: %v, %v\n", storage.IsRootKey(acc.Hash()), acc)
 		if(acc.Balance>0){
 			accountWithBalance++;
 		}
@@ -160,11 +160,13 @@ func initState() (initialBlock *protocol.Block, err error) {
 			}
 		}
 	} else {
-		initialBlock = newBlock([32]byte{},[32]byte{}, [crypto.COMM_PROOF_LENGTH_ED]byte{}, 0)
+		initialBlock = newBlock([32]byte{},[32]byte{}, [crypto.COMM_KEY_LENGTH]byte{}, 0)
 
-		commitmentProof := crypto.SignMessageWithED(rootCommPrivKey, fmt.Sprint(initialBlock.Height))
+		commitmentProof, err := crypto.SignMessageWithRSAKey(rootCommPrivKey, fmt.Sprint(initialBlock.Height))
+		if err != nil {
+			return nil, err
+		}
 		copy(initialBlock.CommitmentProof[:], commitmentProof[:])
-
 		//Append genesis block to the map and save in storage
 		allClosedBlocks = append(allClosedBlocks, initialBlock)
 
@@ -227,7 +229,7 @@ func initState() (initialBlock *protocol.Block, err error) {
 func accStateChange(txSlice []*protocol.AccTx) error {
 	for _, tx := range txSlice {
 		if tx.Header != 2 {
-			newAcc := protocol.NewAccount(tx.PubKey, tx.Issuer, 0, false, [crypto.COMM_KEY_LENGTH_ED]byte{}, tx.Contract, tx.ContractVariables)
+			newAcc := protocol.NewAccount(tx.PubKey, tx.Issuer, 0, false, [crypto.COMM_KEY_LENGTH]byte{}, tx.Contract, tx.ContractVariables)
 			newAccHash := newAcc.Hash()
 
 			acc, _ := storage.GetAccount(newAccHash)

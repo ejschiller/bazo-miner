@@ -14,10 +14,10 @@ import (
 
 //Tests whether the first diff bits are zero
 func validateProofOfStake(diff uint8,
-	prevProofs [][crypto.COMM_PROOF_LENGTH_ED]byte,
+	prevProofs [][crypto.COMM_KEY_LENGTH]byte,
 	height uint32,
 	balance uint64,
-	commitmentProof [crypto.COMM_PROOF_LENGTH_ED]byte,
+	commitmentProof [crypto.COMM_KEY_LENGTH]byte,
 	timestamp int64) bool {
 
 	var (
@@ -27,20 +27,20 @@ func validateProofOfStake(diff uint8,
 	)
 
 	// allocate memory
-	// n * COMM_PROOF_LENGTH_ED bytes (prevProofs) + COMM_PROOF_LENGTH_ED bytes (commitmentProof)+ 4 bytes (height) + 8 bytes (count)
-	hashArgs = make([]byte, len(prevProofs)*crypto.COMM_PROOF_LENGTH_ED+crypto.COMM_PROOF_LENGTH_ED+4+8)
+	// n * COMM_KEY_LENGTH bytes (prevProofs) + COMM_KEY_LENGTH bytes (commitmentProof)+ 4 bytes (height) + 8 bytes (count)
+	hashArgs = make([]byte, len(prevProofs)*crypto.COMM_KEY_LENGTH+crypto.COMM_KEY_LENGTH+4+8)
 
 	binary.BigEndian.PutUint32(heightBuf[:], height)
 	binary.BigEndian.PutUint64(timestampBuf[:], uint64(timestamp))
 
 	index := 0
 	for _, prevProof := range prevProofs {
-		copy(hashArgs[index:index + crypto.COMM_PROOF_LENGTH_ED], prevProof[:])
-		index += crypto.COMM_PROOF_LENGTH_ED
+		copy(hashArgs[index:index + crypto.COMM_KEY_LENGTH], prevProof[:])
+		index += crypto.COMM_KEY_LENGTH
 	}
 
-	copy(hashArgs[index:index + crypto.COMM_PROOF_LENGTH_ED], commitmentProof[:]) // COMM_KEY_LENGTH_ED bytes
-	index += crypto.COMM_PROOF_LENGTH_ED
+	copy(hashArgs[index:index + crypto.COMM_KEY_LENGTH], commitmentProof[:]) // COMM_KEY_LENGTH bytes
+	index += crypto.COMM_KEY_LENGTH
 	copy(hashArgs[index:index + 4], heightBuf[:]) 		// 4 bytes
 	index += 4
 
@@ -74,10 +74,10 @@ func validateProofOfStake(diff uint8,
 //PoS calculation because another block has been validated meanwhile
 func proofOfStake(diff uint8,
 	prevHash [32]byte,
-	prevProofs [][crypto.COMM_PROOF_LENGTH_ED]byte,
+	prevProofs [][crypto.COMM_KEY_LENGTH]byte,
 	height uint32,
 	balance uint64,
-	commitmentProof [crypto.COMM_PROOF_LENGTH_ED]byte) (int64, error) {
+	commitmentProof [crypto.COMM_KEY_LENGTH]byte) (int64, error) {
 
 	var (
 		pos    [32]byte
@@ -93,8 +93,8 @@ func proofOfStake(diff uint8,
 	)
 
 	// allocate memory
-	// n * COMM_KEY_LENGTH_ED bytes (prevProofs) + COMM_KEY_LENGTH_ED bytes (localCommPubKey)+ 4 bytes (height) + 8 bytes (count)
-	hashArgs = make([]byte, len(prevProofs)*crypto.COMM_PROOF_LENGTH_ED+crypto.COMM_PROOF_LENGTH_ED+4+8)
+	// n * COMM_KEY_LENGTH bytes (prevProofs) + COMM_KEY_LENGTH bytes (localCommPubKey)+ 4 bytes (height) + 8 bytes (count)
+	hashArgs = make([]byte, len(prevProofs)*crypto.COMM_KEY_LENGTH+crypto.COMM_KEY_LENGTH+4+8)
 
 	binary.BigEndian.PutUint32(heightBuf[:], height)
 
@@ -102,12 +102,12 @@ func proofOfStake(diff uint8,
 	// ([PrevProofs] ⋅ CommitmentProof ⋅ CurrentBlockHeight ⋅ Seconds)
 	index := 0
 	for _, prevProof := range prevProofs {
-		copy(hashArgs[index:index + crypto.COMM_PROOF_LENGTH_ED], prevProof[:])
-		index += crypto.COMM_PROOF_LENGTH_ED
+		copy(hashArgs[index:index + crypto.COMM_KEY_LENGTH], prevProof[:])
+		index += crypto.COMM_KEY_LENGTH
 	}
 
-	copy(hashArgs[index:index + crypto.COMM_PROOF_LENGTH_ED], commitmentProof[:]) // COMM_KEY_LENGTH_ED bytes
-	index += crypto.COMM_PROOF_LENGTH_ED
+	copy(hashArgs[index:index + crypto.COMM_KEY_LENGTH], commitmentProof[:]) // COMM_KEY_LENGTH bytes
+	index += crypto.COMM_KEY_LENGTH
 	copy(hashArgs[index:index + 4], heightBuf[:]) 		// 4 bytes
 	index += 4
 
@@ -165,7 +165,7 @@ func proofOfStake(diff uint8,
 	return timestamp, nil
 }
 
-func GetLatestProofs(n int, block *protocol.Block) (prevProofs [][crypto.COMM_PROOF_LENGTH_ED]byte) {
+func GetLatestProofs(n int, block *protocol.Block) (prevProofs [][crypto.COMM_KEY_LENGTH]byte) {
 
 	for block.Height > 0 && n > 0 {
 		//try to read block from 'closedblocks' and 'closedblockswithouttx' bucket.

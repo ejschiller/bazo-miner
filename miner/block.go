@@ -29,7 +29,7 @@ type blockData struct {
 }
 
 //Block constructor, argument is the previous block in the blockchain.
-func newBlock(prevHash [32]byte, prevHashWithoutTx [32]byte, commitmentProof [crypto.COMM_PROOF_LENGTH_ED]byte, height uint32) *protocol.Block {
+func newBlock(prevHash [32]byte, prevHashWithoutTx [32]byte, commitmentProof [crypto.COMM_KEY_LENGTH]byte, height uint32) *protocol.Block {
 	block := new(protocol.Block)
 	block.PrevHash = prevHash
 	block.PrevHashWithoutTx = prevHashWithoutTx
@@ -70,7 +70,7 @@ func finalizeBlock(block *protocol.Block) error {
 
 	// Cryptographic Sortition for PoS in Bazo
 	// The commitment proof stores a signed message of the Height that this block was created at.
-	commitmentProof, err := crypto.SignMessageWithSeedKey(commPrivKey, fmt.Sprint(block.Height))
+	commitmentProof, err := crypto.SignMessageWithRSAKey(commPrivKey, fmt.Sprint(block.Height))
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,7 @@ func finalizeBlock(block *protocol.Block) error {
 	block.NrIoTTx = uint16(len(block.IoTTxData))
 
 
-	copy(block.CommitmentProof[0:crypto.COMM_PROOF_LENGTH_ED], commitmentProof[:])
+	copy(block.CommitmentProof[0:crypto.COMM_KEY_LENGTH], commitmentProof[:])
 
 	return nil
 }
@@ -197,6 +197,7 @@ func addAccTx(b *protocol.Block, tx *protocol.AccTx) error {
 }
 
 func addIoTTx(b *protocol.Block, tx *protocol.IotTx) error {
+	fmt.Println(tx.String())
 	if _, exists := b.StateCopy[tx.From]; !exists {
 		if acc := storage.State[tx.From]; acc != nil {
 			hash := protocol.SerializeHashContent(acc.Address)
@@ -1184,11 +1185,13 @@ func preValidate(block *protocol.Block, initialSetup bool) (accTxSlice []*protoc
 	//Second, check if the commitment proof of the proposed block can be verified with the public key
 	//Invalid if the commitment proof can not be verified with the public key of the proposer
 	//TODO: @ilecipi
-	commitmentPubKey := [32]byte{}
-	copy(commitmentPubKey[:], acc.CommitmentKey[:])
+	commitmentPubKey, err := crypto.CreateRSAPubKeyFromBytes(acc.CommitmentKey)
+	if err != nil {
+		return nil, nil, nil, nil,nil, nil, errors.New("Invalid commitment key in account.")
+	}
 
-	valid := crypto.VerifyMessageWithED(commitmentPubKey, fmt.Sprint(block.Height), block.CommitmentProof[:])
-	if !valid {
+	err = crypto.VerifyMessageWithRSAKey(commitmentPubKey, fmt.Sprint(block.Height), block.CommitmentProof)
+	if err != nil {
 		return nil, nil, nil, nil, nil,nil, errors.New("The submitted commitment proof can not be verified.")
 	}
 	//Invalid if PoS calculation is not correct.

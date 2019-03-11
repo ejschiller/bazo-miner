@@ -1,6 +1,7 @@
 package miner
 
 import (
+	"crypto/rsa"
 	"github.com/bazo-blockchain/bazo-miner/crypto"
 	"github.com/bazo-blockchain/bazo-miner/protocol"
 	"github.com/bazo-blockchain/bazo-miner/storage"
@@ -20,7 +21,7 @@ var (
 	slashingDict                 = make(map[[32]byte]SlashingProof)
 	validatorAccAddress          [32]byte
 	multisigPubKey               ed25519.PublicKey
-	commPrivKey, rootCommPrivKey ed25519.PrivateKey
+	commPrivKey, rootCommPrivKey *rsa.PrivateKey
 	blockchainSize               = 0
 	FileConnectionsLog         *os.File
 	FileConnections   	       *os.File
@@ -29,7 +30,7 @@ var (
 )
 
 //Miner entry point
-func Init(validatorWallet, multisigWallet ed25519.PublicKey , rootWallet, validatorCommitment, rootCommitment ed25519.PrivateKey) {
+func Init(validatorWallet, multisigWallet ed25519.PublicKey , rootWallet ed25519.PrivateKey, validatorCommitment, rootCommitment *rsa.PrivateKey) {
 	var err error
 
 
@@ -76,7 +77,7 @@ func Init(validatorWallet, multisigWallet ed25519.PublicKey , rootWallet, valida
 var StartTime = time.Now()
 //Mining is a constant process, trying to come up with a successful PoW.
 func mining(initialBlock *protocol.Block) {
-	currentBlock := newBlock(initialBlock.Hash, initialBlock.HashWithoutTx, [crypto.COMM_PROOF_LENGTH_ED]byte{}, initialBlock.Height+1)
+	currentBlock := newBlock(initialBlock.Hash, initialBlock.HashWithoutTx, [crypto.COMM_KEY_LENGTH]byte{}, initialBlock.Height+1)
 
 	for {
 		err := finalizeBlock(currentBlock)
@@ -105,7 +106,7 @@ func mining(initialBlock *protocol.Block) {
 		//validated with block validation, so we wait in order to not work on tx data that is already validated
 		//when we finish the block.
 		blockValidation.Lock()
-		nextBlock := newBlock(lastBlock.Hash, lastBlock.HashWithoutTx, [crypto.COMM_PROOF_LENGTH_ED]byte{}, lastBlock.Height+1)
+		nextBlock := newBlock(lastBlock.Hash, lastBlock.HashWithoutTx, [crypto.COMM_KEY_LENGTH]byte{}, lastBlock.Height+1)
 		currentBlock = nextBlock
 		StartTime = time.Now()
 		prepareBlock(currentBlock)
@@ -119,8 +120,8 @@ func initRootKey(rootKey ed25519.PublicKey) error {
 	address := crypto.GetAddressFromPubKeyED(rootKey)
 	addressHash := protocol.SerializeHashContent(address)
 
-	var commPubKey [crypto.COMM_KEY_LENGTH_ED]byte
-	copy(commPubKey[:], rootCommPrivKey[32:])
+	var commPubKey [crypto.COMM_KEY_LENGTH]byte
+	copy(commPubKey[:], rootCommPrivKey.N.Bytes())
 
 	rootAcc := protocol.NewAccount(address, [32]byte{}, activeParameters.Staking_minimum, true, commPubKey, nil, nil)
 	storage.State[addressHash] = &rootAcc
