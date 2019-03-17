@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"bytes"
-	"encoding/binary"
 	"fmt"
 	"github.com/bazo-blockchain/bazo-miner/crypto"
 	"github.com/bazo-blockchain/bazo-miner/miner"
@@ -11,7 +9,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 	"golang.org/x/crypto/ed25519"
-	"golang.org/x/crypto/sha3"
 	"log"
 )
 
@@ -108,14 +105,6 @@ func GetStartCommand(logger *log.Logger) cli.Command {
 }
 
 func Start(args *startArgs, logger *log.Logger) error {
-	var counter = uint32(1234567);
-	buf := new(bytes.Buffer)
-	err := binary.Write(buf, binary.BigEndian, counter)
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	}
-	fmt.Println(sha3.Sum256(buf.Bytes()))
-	fmt.Println(buf.Bytes())
 	storage.Init(args.dbname, args.bootstrapNodeAddress)
 	p2p.Init(args.myNodeAddress)
 
