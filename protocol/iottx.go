@@ -2,13 +2,12 @@ package protocol
 
 import (
 	"bytes"
+	"encoding/binary"
 	"encoding/gob"
 	"fmt"
 	"golang.org/x/crypto/ed25519"
-	"unsafe"
-	"encoding/binary"
 	"golang.org/x/crypto/sha3"
-
+	"unsafe"
 )
 
 //when we broadcast transactions we need a way to distinguish with a type
@@ -20,8 +19,7 @@ type IotTx struct {
 	To     [32]byte
 	Sig    [64]byte
 	Data   []byte
-	Fee    		uint64
-
+	Fee    uint64
 }
 
 func ConstrIotTx(header byte, fee uint64, txCnt uint32, from, to [32]byte, sigKey ed25519.PrivateKey, data []byte) (tx *IotTx, err error) {
@@ -57,7 +55,6 @@ func (tx *IotTx) Hash() (hash [32]byte) {
 	binary.Write(buf, binary.BigEndian, tx.TxFee());
 	binary.Write(buf, binary.BigEndian, tx.Header);
 	binary.Write(buf, binary.BigEndian, tx.Data);
-
 	return sha3.Sum256(buf.Bytes())
 }
 
@@ -93,7 +90,6 @@ func (*IotTx) Decode(encodedTx []byte) *IotTx {
 	return &decoded
 }
 
-
 func (tx IotTx) String() string {
 	return fmt.Sprintf(
 		"\nHeader: %v\n"+
@@ -102,7 +98,7 @@ func (tx IotTx) String() string {
 			"To: %x\n"+
 			"Sig: %x\n"+
 			"Data: %v\n"+
-		"Fee: %v\n",
+			"Fee: %v\n",
 
 		tx.Header,
 		tx.TxCnt,
@@ -114,12 +110,11 @@ func (tx IotTx) String() string {
 	)
 }
 
-func (tx *IotTx) Size() uint64  {
+func (tx *IotTx) Size() uint64 {
 	size := int(unsafe.Sizeof(*tx)) + len(tx.Data)
-	return uint64(size)}
+	return uint64(size)
+}
 func (tx *IotTx) TxFee() uint64 { return tx.Fee }
 
-func (tx *IotTx) Sender() [32]byte { return [32]byte{} } //Return empty because never needed.
-func (tx *IotTx) Receiver() [32]byte { return [32]byte{}}
-
-
+func (tx *IotTx) Sender() [32]byte   { return [32]byte{} } //Return empty because never needed.
+func (tx *IotTx) Receiver() [32]byte { return [32]byte{} }

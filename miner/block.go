@@ -228,7 +228,7 @@ func addIoTTx(b *protocol.Block, tx *protocol.IotTx) error {
 		if (tx.Fee) > b.StateCopy[tx.From].Balance {
 			acc:= b.StateCopy[tx.From]
 			fmt.Println("NO FUNDS --> ",hex.EncodeToString(acc.Address[:]))
-			//return errors.New("Not enough funds to complete the IoT transaction!")
+			return errors.New("Not enough funds to complete the IoT transaction!")
 		}
 	}
 	if b.StateCopy[tx.From].TxCnt != tx.TxCnt {
@@ -325,6 +325,7 @@ func addFundsTx(b *protocol.Block, tx *protocol.FundsTx) error {
 	//b.FundsTxData = append(b.FundsTxData, tx.Hash())
 
 	//storage.FundsTxBeforeAggregation = append(storage.FundsTxBeforeAggregation, tx)
+	//TODO: @ilecipi temporary fix given from febe19 since the whole miner was crashing
 	//storage.WriteFundsTxBeforeAggregation(tx)
 	b.FundsTxData = append(b.FundsTxData, tx.Hash())
 	//logger.Printf("Added tx (%x) to the slice: %v", tx.Hash(), *tx)

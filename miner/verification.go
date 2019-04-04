@@ -39,23 +39,24 @@ func verifyIotTx(tx *protocol.IotTx) bool {
 		return false
 	}
 
-	//fundsTx only makes sense if amount > 0
-	//if tx.Amount == 0 || tx.Amount > MAX_MONEY {
-	//	logger.Printf("Invalid transaction amount: %v\n", tx.Amount)
-	//	return false
-	//}
 	//Check if accounts are present in the actual state
 	accFrom := storage.State[tx.From]
 	accTo := storage.State[tx.To]
+
 	//Accounts non existent
 	if accTo == nil || accFrom == nil {
-		//logger.Printf("Account non existent. From: %v\nTo: %v\n", accFrom, accTo)
+		logger.Printf("Account non existent. From: %v\nTo: %v\n", accFrom, accTo)
 		return false
 	}
+	//IoT devices can hash the address differently. Usually we transform both addresses (From & To) into a string using sprintf
+	//and then we hash it, in arduino this does not give the same hash and therefore the only way is to
+	//hash it as a byte[] directly without converting it first into a string.
+	//Only so, the txHash will correspond to the right one
 	accFromHash := protocol.SerializeHashContentIoT(accFrom.Address)
 	accToHash := protocol.SerializeHashContentIoT(accTo.Address)
 	copy(tx.From[:], accFromHash[:]);
 	copy(tx.To[:], accToHash[:]);
+
 	txHash := tx.Hash()
 	pubKey := accFrom.Address[:]
 	if ed25519.Verify(pubKey, txHash[:], tx.Sig[:]) && tx.From != tx.To {
@@ -161,7 +162,8 @@ func verifyFundsTx(tx *protocol.FundsTx) bool {
 	}
 
 	//fundsTx only makes sense if amount > 0
-	if tx.Amount == 0 || tx.Amount > MAX_MONEY {
+	fmt.Println(tx.Data)
+	if (tx.Amount == 0&&tx.Data==nil) || tx.Amount > MAX_MONEY {
 		logger.Printf("Invalid transaction amount: %v\n", tx.Amount)
 		return false
 	}

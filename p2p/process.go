@@ -117,7 +117,7 @@ func processIotTxBrdcst(p *peer, payload []byte, brdcstType uint8) {
 	}
 
 	//Write to mempool and rebroadcast
-	//logger.Printf("Writing IoT transaction (%x) in the mempool.\n", tx.Hash())
+	logger.Printf("Writing IoT transaction (%x) in the mempool.\n", tx.Hash())
 
 	storage.WriteOpenTx(tx)
 

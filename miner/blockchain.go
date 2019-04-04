@@ -115,7 +115,6 @@ func mining(initialBlock *protocol.Block) {
 }
 
 //At least one root key needs to be set which is allowed to create new accounts.
-//At least one root key needs to be set which is allowed to create new accounts.
 func initRootKey(rootKey ed25519.PublicKey) error {
 	address := crypto.GetAddressFromPubKeyED(rootKey)
 	addressHash := protocol.SerializeHashContent(address)

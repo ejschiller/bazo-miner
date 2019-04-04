@@ -373,9 +373,9 @@ func fundsStateChange(txSlice []*protocol.FundsTx) (err error) {
 		//Check transaction counter
 		//TODO @ilecipi revert check TxCnt
 
-		//if tx.TxCnt != accSender.TxCnt {
-		//	err = errors.New(fmt.Sprintf("Sender txCnt does not match: %v (tx.txCnt) vs. %v (state txCnt).", tx.TxCnt, accSender.TxCnt))
-		//}
+		if tx.TxCnt != accSender.TxCnt {
+			//err = errors.New(fmt.Sprintf("Sender txCnt does not match: %v (tx.txCnt) vs. %v (state txCnt).", tx.TxCnt, accSender.TxCnt))
+		}
 
 		//Check sender balance
 		if (tx.Amount + tx.Fee) > accSender.Balance {
@@ -572,7 +572,6 @@ func collectTxFees(accTxSlice []*protocol.AccTx, fundsTxSlice []*protocol.FundsT
 		}
 
 		senderAcc, err = storage.GetAccount(tx.From)
-
 
 		minerAcc.Balance += tx.Fee
 		senderAcc.Balance -= tx.Fee
