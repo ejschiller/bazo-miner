@@ -47,7 +47,6 @@ func (tx *IotTx) Hash() (hash [32]byte) {
 		return [32]byte{}
 	}
 	//Order -> To	txCnt	txFee	Header	data
-	//TODO: @ilecipi add tx.From as well!
 	buf := new(bytes.Buffer)
 	binary.Write(buf, binary.BigEndian, tx.To);
 	binary.Write(buf, binary.BigEndian, tx.From);
