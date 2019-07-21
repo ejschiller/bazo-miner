@@ -42,18 +42,14 @@ func ConstrIotTx(header byte, fee uint64, txCnt uint32, from, to [32]byte, sigKe
 }
 
 func (tx *IotTx) Hash() (hash [32]byte) {
-	if tx == nil {
-		//is returning nil better?
-		return [32]byte{}
-	}
-	//Order -> To	txCnt	txFee	Header	data
+	//Order -> To From txCnt txFee Header data
 	buf := new(bytes.Buffer)
-	binary.Write(buf, binary.BigEndian, tx.To);
-	binary.Write(buf, binary.BigEndian, tx.From);
-	binary.Write(buf, binary.BigEndian, tx.TxCnt);
-	binary.Write(buf, binary.BigEndian, tx.TxFee());
-	binary.Write(buf, binary.BigEndian, tx.Header);
-	binary.Write(buf, binary.BigEndian, tx.Data);
+	binary.Write(buf, binary.BigEndian, tx.To)
+	binary.Write(buf, binary.BigEndian, tx.From)
+	binary.Write(buf, binary.BigEndian, tx.TxCnt)
+	binary.Write(buf, binary.BigEndian, tx.TxFee())
+	binary.Write(buf, binary.BigEndian, tx.Header)
+	binary.Write(buf, binary.BigEndian, tx.Data)
 	return sha3.Sum256(buf.Bytes())
 }
 

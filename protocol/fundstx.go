@@ -48,11 +48,6 @@ func ConstrFundsTx(header byte, amount uint64, fee uint64, txCnt uint32, from, t
 }
 
 func (tx *FundsTx) Hash() (hash [32]byte) {
-	if tx == nil {
-		//is returning nil better?
-		return [32]byte{}
-	}
-
 	txHash := struct {
 		Header byte
 		Amount uint64
@@ -62,13 +57,7 @@ func (tx *FundsTx) Hash() (hash [32]byte) {
 		To     [32]byte
 		Data   []byte
 	}{
-		tx.Header,
-		tx.Amount,
-		tx.Fee,
-		tx.TxCnt,
-		tx.From,
-		tx.To,
-		tx.Data,
+		//...
 	}
 
 	return SerializeHashContent(txHash)
